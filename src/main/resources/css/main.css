@@ -1,0 +1,14 @@
+.root {
+	-fx-font-size: 16px;
+	-fx-font-family: Arial;
+	}
+
+.status-bar {
+	-fx-background-color: none;
+	-fx-border-radius: 3px;
+}
+
+.wrapper {
+    -fx-border-radius: 3px;
+    -fx-border-color: #7D7D7D;
+}

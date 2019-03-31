@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
+<?import org.controlsfx.control.StatusBar?>
+
+<AnchorPane minHeight="720.0" minWidth="1280.0" prefHeight="720.0" prefWidth="1280.0" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.Controllers.MainController">
+   <children>
+      <GridPane layoutX="604.0" layoutY="209.0" prefHeight="720.0" prefWidth="1280.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="0.0">
+        <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="230.0" minWidth="230.0" prefWidth="230.0" />
+            <ColumnConstraints hgrow="SOMETIMES" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="260.0" minWidth="260.0" prefWidth="260.0" />
+            <ColumnConstraints hgrow="SOMETIMES" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="10.0" minWidth="10.0" prefWidth="10.0" />
+            <ColumnConstraints hgrow="SOMETIMES" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="148.0" minWidth="148.0" prefWidth="148.0" />
+            <ColumnConstraints hgrow="SOMETIMES" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="148.0" minWidth="148.0" prefWidth="148.0" />
+            <ColumnConstraints hgrow="SOMETIMES" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="148.0" minWidth="148.0" prefWidth="148.0" />
+            <ColumnConstraints hgrow="SOMETIMES" />
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="60.0" minHeight="60.0" prefHeight="60.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <LineChart fx:id="graph" animated="false" createSymbols="false" legendVisible="false" title="График сигнала" GridPane.columnSpan="13" GridPane.rowIndex="1">
+              <xAxis>
+                <NumberAxis autoRanging="false" forceZeroInRange="false" label="сек" minorTickCount="0" minorTickLength="0.0" minorTickVisible="false" side="BOTTOM" tickUnit="0.1" upperBound="1.0" />
+              </xAxis>
+              <yAxis>
+                <NumberAxis autoRanging="false" label="Вольт" lowerBound="-10.0" side="LEFT" tickUnit="2.0" upperBound="10.0" />
+              </yAxis>
+               <GridPane.margin>
+                  <Insets left="10.0" right="10.0" />
+               </GridPane.margin>
+            </LineChart>
+            <Label style="-fx-font-style: bold;" text="Настройки графика:" GridPane.columnSpan="5" GridPane.halignment="CENTER" GridPane.rowIndex="3">
+               <font>
+                  <Font name="Arial Bold" size="16.0" />
+               </font>
+            </Label>
+            <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="wrapper" stylesheets="@../css/main.css" GridPane.columnSpan="5" GridPane.rowIndex="4" GridPane.rowSpan="3" />
+            <Label text="Масштаб по вертикали:" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
+            <ComboBox fx:id="verticalScalesComboBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5">
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </ComboBox>
+            <Label text="Масштаб по горизонтали:" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
+            <ComboBox fx:id="horizontalScalesComboBox" prefWidth="150.0" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="5">
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </ComboBox>
+            <Label style="-fx-font-style: bold;" text="Настройки сигнала:" GridPane.columnIndex="6" GridPane.columnSpan="7" GridPane.halignment="CENTER" GridPane.rowIndex="3">
+               <font>
+                  <Font name="Arial Bold" size="16.0" />
+               </font>
+            </Label>
+            <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="wrapper" stylesheets="@../css/main.css" GridPane.columnIndex="6" GridPane.columnSpan="7" GridPane.rowIndex="4" GridPane.rowSpan="3" />
+            <Label text="Амплитуда, В:" GridPane.columnIndex="7" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
+            <TextField fx:id="amplitudeTextField" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" GridPane.columnIndex="7" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
+            <Label text="Частота, Гц:" GridPane.columnIndex="9" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
+            <TextField fx:id="frequencyTextField" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" GridPane.columnIndex="9" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
+            <Label text="Фаза, °:" GridPane.columnIndex="11" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
+            <TextField fx:id="phaseTextField" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" GridPane.columnIndex="11" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
+            <Button fx:id="generateButton" mnemonicParsing="false" onAction="#handleGenerate" prefHeight="50.0" prefWidth="250.0" text="Генерировать" GridPane.columnSpan="13" GridPane.halignment="CENTER" GridPane.rowIndex="8" GridPane.valignment="BOTTOM">
+               <font>
+                  <Font name="Arial" size="16.0" />
+               </font>
+            </Button>
+            <StatusBar fx:id="statusBar" text="" GridPane.columnSpan="13" GridPane.rowIndex="9" />
+         </children>
+      </GridPane>
+   </children>
+</AnchorPane>
