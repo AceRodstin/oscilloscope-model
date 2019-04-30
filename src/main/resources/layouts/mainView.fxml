@@ -76,11 +76,11 @@
                </font>
             </Label>
             <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="wrapper" stylesheets="@../css/main.css" GridPane.columnIndex="8" GridPane.columnSpan="7" GridPane.rowIndex="4" GridPane.rowSpan="3" />
-            <Label text="Амплитуда, В:" GridPane.columnIndex="9" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
+            <Label fx:id="amplitudeLabel" text="Амплитуда, В:" GridPane.columnIndex="9" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
             <TextField fx:id="amplitudeTextField" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" text="1" GridPane.columnIndex="9" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
-            <Label text="Частота, Гц:" GridPane.columnIndex="11" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
+            <Label fx:id="frequencyLabel" text="Частота, Гц:" GridPane.columnIndex="11" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
             <TextField fx:id="frequencyTextField" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" text="1" GridPane.columnIndex="11" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
-            <Label text="Фаза, °:" GridPane.columnIndex="13" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
+            <Label fx:id="phaseLabel" text="Фаза, °:" GridPane.columnIndex="13" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
             <TextField fx:id="phaseTextField" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" text="0" GridPane.columnIndex="13" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
             <Button fx:id="generateButton" mnemonicParsing="false" onAction="#handleGenerate" prefHeight="50.0" prefWidth="250.0" text="Генерировать" GridPane.columnSpan="15" GridPane.halignment="CENTER" GridPane.rowIndex="8" GridPane.valignment="BOTTOM">
                <font>

@@ -103,9 +103,11 @@ public class GraphController {
             if (selectedType.equals(GraphTypes.SIGNAL.getTypeName())) {
                 setHorizontalSignalScales();
                 setSignalTitles();
+                mainController.restartShowDataThread();
             } else if (selectedType.equals(GraphTypes.SPECTRUM.getTypeName())) {
                 setHorizontalSpectrumScales();
                 setSpectrumTitles();
+                mainController.restartShowDataThread();
             }
         });
     }

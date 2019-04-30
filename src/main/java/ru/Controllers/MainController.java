@@ -9,6 +9,7 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import org.controlsfx.control.StatusBar;
 import ru.Models.GraphModel;
@@ -22,7 +23,11 @@ import java.util.List;
 
 public class MainController implements BaseController {
     @FXML
+    private Label amplitudeLabel;
+    @FXML
     private TextField amplitudeTextField;
+    @FXML
+    private Label frequencyLabel;
     @FXML
     private TextField frequencyTextField;
     @FXML
@@ -30,13 +35,15 @@ public class MainController implements BaseController {
     @FXML
     private LineChart<Number, Number> graph;
     @FXML
+    private ComboBox<String> graphTypeComboBox;
+    @FXML
     private ComboBox<String> horizontalScalesComboBox;
+    @FXML
+    private Label phaseLabel;
     @FXML
     private TextField phaseTextField;
     @FXML
     private StatusBar statusBar;
-    @FXML
-    private ComboBox<String> graphTypeComboBox;
     @FXML
     private ComboBox<String> verticalScalesComboBox;
 
@@ -81,6 +88,15 @@ public class MainController implements BaseController {
         checkGenerationState();
     }
 
+    private void toggleUiElementsState(boolean isDisable) {
+        amplitudeLabel.setDisable(isDisable);
+        amplitudeTextField.setDisable(isDisable);
+        frequencyLabel.setDisable(isDisable);
+        frequencyTextField.setDisable(isDisable);
+        phaseLabel.setDisable(isDisable);
+        phaseTextField.setDisable(isDisable);
+    }
+
     private void show() {
         showSignal = new Thread(() -> {
             while (!controllerManager.isFinished()) {
@@ -102,9 +118,11 @@ public class MainController implements BaseController {
             controllerManager.setFinished(true);
             showSignal.interrupt();
             generateButton.setText("Генерировать");
+            toggleUiElementsState(false);
         } else {
             controllerManager.setFinished(false);
             generateButton.setText("Остановить генерацию");
+            toggleUiElementsState(true);
         }
     }
 
@@ -131,6 +149,14 @@ public class MainController implements BaseController {
         signalModel.setAmplitude(Double.parseDouble(amplitudeTextField.getText()));
         signalModel.setFrequency(Double.parseDouble(frequencyTextField.getText()));
         signalModel.setPhase(Double.parseDouble(phaseTextField.getText()));
+    }
+
+    public void restartShowDataThread() {
+        controllerManager.setFinished(true);
+        showSignal.interrupt();
+        Utils.sleep(100);
+        controllerManager.setFinished(false);
+        show();
     }
 
     public ControllerManager getControllerManager() {
