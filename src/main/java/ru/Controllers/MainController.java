@@ -27,6 +27,8 @@ public class MainController implements BaseController {
     @FXML
     private TextField amplitudeTextField;
     @FXML
+    private ComboBox<String> filterComboBox;
+    @FXML
     private Label frequencyLabel;
     @FXML
     private TextField frequencyTextField;
@@ -42,6 +44,10 @@ public class MainController implements BaseController {
     private Label phaseLabel;
     @FXML
     private TextField phaseTextField;
+    @FXML
+    private ComboBox<String> signalTypeComboBox;
+    @FXML
+    private Label signalTypeLabel;
     @FXML
     private StatusBar statusBar;
     @FXML
@@ -59,6 +65,7 @@ public class MainController implements BaseController {
         initializeGraph();
         graphController.initComboBoxes();
         addDigitFiltersToTextFields();
+        setSignalTypes();
     }
 
     private void initializeGraph() {
@@ -82,6 +89,19 @@ public class MainController implements BaseController {
         });
     }
 
+    private void setSignalTypes() {
+        ObservableList<String> types = FXCollections.observableArrayList();
+
+        types.add(SignalTypes.SINE.getTypeName());
+        types.add(SignalTypes.PULSE.getTypeName());
+        types.add(SignalTypes.TRIANGLES.getTypeName());
+        types.add(SignalTypes.SAW.getTypeName());
+        types.add(SignalTypes.NOISE.getTypeName());
+
+        signalTypeComboBox.setItems(types);
+        signalTypeComboBox.getSelectionModel().select(0);
+    }
+
     public void handleGenerate() {
         show();
         buttonPressedCounter++;
@@ -95,6 +115,8 @@ public class MainController implements BaseController {
         frequencyTextField.setDisable(isDisable);
         phaseLabel.setDisable(isDisable);
         phaseTextField.setDisable(isDisable);
+        signalTypeComboBox.setDisable(isDisable);
+        signalTypeLabel.setDisable(isDisable);
     }
 
     private void show() {
@@ -104,7 +126,7 @@ public class MainController implements BaseController {
                 if (signalParametersSet) {
                     clearGraph();
                     parseSignalParameters();
-                    signalModel.generateSignal();
+                    signalModel.generateSignal(signalTypeComboBox.getSelectionModel().getSelectedItem());
                     graphController.showSignal();
                 }
             }
@@ -161,6 +183,10 @@ public class MainController implements BaseController {
 
     public ControllerManager getControllerManager() {
         return controllerManager;
+    }
+
+    public ComboBox<String> getFilterComboBox() {
+        return filterComboBox;
     }
 
     public LineChart<Number, Number> getGraph() {

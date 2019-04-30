@@ -43,6 +43,9 @@
             <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="60.0" minHeight="60.0" prefHeight="60.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
@@ -63,31 +66,35 @@
                   <Font name="Arial Bold" size="16.0" />
                </font>
             </Label>
-            <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="wrapper" stylesheets="@../css/main.css" GridPane.columnSpan="7" GridPane.rowIndex="4" GridPane.rowSpan="3" />
+            <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="wrapper" stylesheets="@../css/main.css" GridPane.columnSpan="7" GridPane.rowIndex="4" GridPane.rowSpan="6" />
             <Label text="Вертик. масштаб:" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
             <ComboBox fx:id="verticalScalesComboBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
             <Label text="Горизонт. масштаб:" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
             <ComboBox fx:id="horizontalScalesComboBox" prefWidth="150.0" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
             <Label text="Отображать:" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
             <ComboBox fx:id="graphTypeComboBox" prefWidth="150.0" GridPane.columnIndex="5" GridPane.rowIndex="5" />
+            <Label text="Цифровой фильтр:" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="7" />
+            <ComboBox fx:id="filterComboBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
             <Label styleClass="title" text="Настройки сигнала:" GridPane.columnIndex="8" GridPane.columnSpan="7" GridPane.halignment="CENTER" GridPane.rowIndex="3">
                <font>
                   <Font name="Arial Bold" size="16.0" />
                </font>
             </Label>
-            <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="wrapper" stylesheets="@../css/main.css" GridPane.columnIndex="8" GridPane.columnSpan="7" GridPane.rowIndex="4" GridPane.rowSpan="3" />
+            <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="wrapper" stylesheets="@../css/main.css" GridPane.columnIndex="8" GridPane.columnSpan="7" GridPane.rowIndex="4" GridPane.rowSpan="6" />
             <Label fx:id="amplitudeLabel" text="Амплитуда, В:" GridPane.columnIndex="9" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
             <TextField fx:id="amplitudeTextField" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" text="1" GridPane.columnIndex="9" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
             <Label fx:id="frequencyLabel" text="Частота, Гц:" GridPane.columnIndex="11" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
             <TextField fx:id="frequencyTextField" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" text="1" GridPane.columnIndex="11" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
             <Label fx:id="phaseLabel" text="Фаза, °:" GridPane.columnIndex="13" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
             <TextField fx:id="phaseTextField" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" text="0" GridPane.columnIndex="13" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
-            <Button fx:id="generateButton" mnemonicParsing="false" onAction="#handleGenerate" prefHeight="50.0" prefWidth="250.0" text="Генерировать" GridPane.columnSpan="15" GridPane.halignment="CENTER" GridPane.rowIndex="8" GridPane.valignment="BOTTOM">
+            <Label fx:id="signalTypeLabel" text="Тип сигнала:" GridPane.columnIndex="9" GridPane.halignment="CENTER" GridPane.rowIndex="7" />
+            <ComboBox fx:id="signalTypeComboBox" prefWidth="150.0" GridPane.columnIndex="9" GridPane.rowIndex="8" />
+            <Button fx:id="generateButton" mnemonicParsing="false" onAction="#handleGenerate" prefHeight="50.0" prefWidth="250.0" text="Генерировать" GridPane.columnSpan="15" GridPane.halignment="CENTER" GridPane.rowIndex="11" GridPane.valignment="BOTTOM">
                <font>
                   <Font name="Arial" size="16.0" />
                </font>
             </Button>
-            <StatusBar fx:id="statusBar" text="" GridPane.columnSpan="13" GridPane.rowIndex="9" />
+            <StatusBar fx:id="statusBar" text="" GridPane.columnSpan="13" GridPane.rowIndex="12" />
          </children>
       </GridPane>
    </children>
