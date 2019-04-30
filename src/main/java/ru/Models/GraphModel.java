@@ -12,7 +12,7 @@ public class GraphModel {
             lowerBound = -scale * 5;
             tickUnit = scale;
             upperBound = scale * 5;
-        } else if (valueName.equals("с")){
+        } else if (valueName.equals("с") || valueName.equals("Гц")) {
             lowerBound = 0;
             tickUnit = scale;
             upperBound = scale * 10;
@@ -25,12 +25,13 @@ public class GraphModel {
         double digits = Double.parseDouble(separatedScale[0]);
         String suffix = separatedScale[1].substring(0, 1);
         separatedScale = scale.split("/дел");
-        valueName = separatedScale[0].substring(separatedScale[0].length() - 1);
 
         if (suffix.equals("м")) {
             this.scale = digits * 0.001;
+            valueName = separatedScale[0].substring(separatedScale[0].length() - 1);
         } else {
             this.scale = digits;
+            valueName = separatedScale[0].split( " ")[1];
         }
     }
 

@@ -1,6 +1,6 @@
 .root {
 	-fx-font-size: 16px;
-	-fx-font-family: Arial;
+	-fx-font-family: "Arial";
 	}
 
 .status-bar {
@@ -11,4 +11,9 @@
 .wrapper {
     -fx-border-radius: 3px;
     -fx-border-color: #7D7D7D;
+}
+
+.chart-title {
+	-fx-font-family: "Arial Bold";
+	-fx-font-size: 16px;
 }

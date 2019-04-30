@@ -7,29 +7,41 @@ import static java.lang.Thread.sleep;
 
 public class StatusBarLine {
     private boolean isStatusBarHidden = true;
+    private StatusBar statusBar;
     private Thread statusBarThread;
 
     public void setStatus(String text, StatusBar statusBar) {
+        this.statusBar = statusBar;
         statusBar.setText(text);
+        checkStatusBar();
+    }
+
+    private void checkStatusBar() {
         if (isStatusBarHidden) {
-            startNewStatusBarThread(statusBar);
+            startNewStatusBarThread();
         } else {
             statusBarThread.interrupt();
-            startNewStatusBarThread(statusBar);
+            startNewStatusBarThread();
         }
     }
 
-    private void startNewStatusBarThread(StatusBar statusBar) {
+    private void startNewStatusBarThread() {
+        isStatusBarHidden = false;
+
         statusBarThread = new Thread(() -> {
-            isStatusBarHidden = false;
             try {
                 sleep(5000);
-                Platform.runLater(() -> statusBar.setText(""));
+                clearStatus();
             } catch (InterruptedException ignored) {
             } finally {
                 isStatusBarHidden = true;
             }
         });
+
         statusBarThread.start();
+    }
+
+    private void clearStatus() {
+        Platform.runLater(() -> statusBar.setText(""));
     }
 }

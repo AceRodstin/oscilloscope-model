@@ -36,22 +36,21 @@ public class MainController implements BaseController {
     @FXML
     private StatusBar statusBar;
     @FXML
+    private ComboBox<String> graphTypeComboBox;
+    @FXML
     private ComboBox<String> verticalScalesComboBox;
 
     private int buttonPressedCounter;
     private ControllerManager controllerManager;
-    private GraphModel graphModel = new GraphModel();
-    private boolean signalParametersSetted;
+    private GraphController graphController = new GraphController(this);
+    private Thread showSignal;
+    private boolean signalParametersSet;
     private SignalModel signalModel = new SignalModel();
     private StatusBarLine statusBarLine = new StatusBarLine();
 
     public void initialize() {
         initializeGraph();
-        addVerticalScaleValues();
-        addHorizontalScaleValues();
-        setDefaultScales();
-        listenScalesComboBox(verticalScalesComboBox);
-        listenScalesComboBox(horizontalScalesComboBox);
+        graphController.initComboBoxes();
         addDigitFiltersToTextFields();
     }
 
@@ -59,46 +58,6 @@ public class MainController implements BaseController {
         graph.getData().add(signalModel.getGraphSeries());
     }
 
-    private void addVerticalScaleValues() {
-        ObservableList<String> scaleValues = FXCollections.observableArrayList();
-
-        scaleValues.add("1 мВ/дел");
-        scaleValues.add("10 мВ/дел");
-        scaleValues.add("100 мВ/дел");
-        scaleValues.add("1 В/дел");
-        scaleValues.add("10 В/дел");
-        scaleValues.add("100 В/дел");
-
-        verticalScalesComboBox.setItems(scaleValues);
-    }
-
-    private void addHorizontalScaleValues() {
-        ObservableList<String> scaleValues = FXCollections.observableArrayList();
-
-        scaleValues.add("1 мс/дел");
-        scaleValues.add("10 мс/дел");
-        scaleValues.add("100 мс/дел");
-
-        horizontalScalesComboBox.setItems(scaleValues);
-    }
-
-    private void setDefaultScales() {
-        verticalScalesComboBox.getSelectionModel().select(3);
-        graphModel.parseScale(verticalScalesComboBox.getSelectionModel().getSelectedItem());
-        graphModel.calculateBounds();
-        setScale((NumberAxis) graph.getYAxis());
-
-        horizontalScalesComboBox.getSelectionModel().select(2);
-        graphModel.parseScale(horizontalScalesComboBox.getSelectionModel().getSelectedItem());
-        graphModel.calculateBounds();
-        setScale((NumberAxis) graph.getXAxis());
-    }
-
-    private void setScale(NumberAxis axis) {
-        axis.setLowerBound(graphModel.getLowerBound());
-        axis.setTickUnit(graphModel.getTickUnit());
-        axis.setUpperBound(graphModel.getUpperBound());
-    }
 
     private void addDigitFiltersToTextFields() {
         setDigitFilter(amplitudeTextField);
@@ -106,20 +65,6 @@ public class MainController implements BaseController {
         setDigitFilter(phaseTextField);
     }
 
-    private void listenScalesComboBox(ComboBox<String> comboBox) {
-        comboBox.valueProperty().addListener(observable -> {
-            if (!comboBox.getSelectionModel().isEmpty()) {
-                graphModel.parseScale(comboBox.getSelectionModel().getSelectedItem());
-                graphModel.calculateBounds();
-
-                if (comboBox == verticalScalesComboBox) {
-                    setScale((NumberAxis) graph.getYAxis());
-                } else {
-                    setScale((NumberAxis) graph.getXAxis());
-                }
-            }
-        });
-    }
 
     private void setDigitFilter(TextField textField) {
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -137,22 +82,25 @@ public class MainController implements BaseController {
     }
 
     private void show() {
-        new Thread(() -> {
+        showSignal = new Thread(() -> {
             while (!controllerManager.isFinished()) {
                 checkEmptyTextFields();
-                if (signalParametersSetted) {
+                if (signalParametersSet) {
                     clearGraph();
                     parseSignalParameters();
                     signalModel.generateSignal();
-                    showSignal();
+                    graphController.showSignal();
                 }
             }
-        }).start();
+        });
+
+        showSignal.start();
     }
 
     private void checkGenerationState() {
         if (buttonPressedCounter % 2 == 0) {
             controllerManager.setFinished(true);
+            showSignal.interrupt();
             generateButton.setText("Генерировать");
         } else {
             controllerManager.setFinished(false);
@@ -164,10 +112,10 @@ public class MainController implements BaseController {
         if (amplitudeTextField.getText().isEmpty() ||
                 frequencyTextField.getText().isEmpty() ||
                 phaseTextField.getText().isEmpty()) {
-            statusBarLine.setStatus("Перед генерацией необходимо указать параметры сигнала", statusBar);
-            signalParametersSetted = false;
+            Platform.runLater(() -> statusBarLine.setStatus("Перед генерацией необходимо указать параметры сигнала", statusBar));
+            signalParametersSet = false;
         } else {
-            signalParametersSetted = true;
+            signalParametersSet = true;
         }
     }
 
@@ -185,43 +133,28 @@ public class MainController implements BaseController {
         signalModel.setPhase(Double.parseDouble(phaseTextField.getText()));
     }
 
-    public void showSignal() {
-        List<XYChart.Data<Number, Number>> intermediateList = signalModel.getIntermediateList();
-        XYChart.Series<Number, Number> graphSeries = signalModel.getGraphSeries();
+    public ControllerManager getControllerManager() {
+        return controllerManager;
+    }
 
-        graphModel.parseScale(horizontalScalesComboBox.getSelectionModel().getSelectedItem());
-        graphModel.calculateBounds();
-        int scale;
+    public LineChart<Number, Number> getGraph() {
+        return graph;
+    }
 
-        if (signalModel.getFrequency() < 10) {
-            scale = 10;
-        } else if (signalModel.getFrequency() < 50) {
-            scale = 2;
-        } else {
-            scale = 1;
-        }
+    public ComboBox<String> getGraphTypeComboBox() {
+        return graphTypeComboBox;
+    }
 
-        int index;
-        for (index = 0; index < intermediateList.size(); index += scale) {
-            XYChart.Data point = intermediateList.get(index);
-            Runnable addPoint = () -> graphSeries.getData().add(point);
+    public ComboBox<String> getHorizontalScalesComboBox() {
+        return horizontalScalesComboBox;
+    }
 
-            if ((double) point.getXValue() < graphModel.getUpperBound()) {
-                Platform.runLater(addPoint);
-                Utils.sleep(1);
-                index += scale;
-            }
+    public SignalModel getSignalModel() {
+        return signalModel;
+    }
 
-            if (index == intermediateList.size() - scale) {
-                XYChart.Data lastPoint = new XYChart.Data(graphModel.getUpperBound(), intermediateList.get(0).getYValue());
-                Platform.runLater(() -> graphSeries.getData().add(lastPoint));
-                Utils.sleep(100);
-            } else if ((double) point.getXValue() >= graphModel.getUpperBound()){
-                Platform.runLater(addPoint);
-                Utils.sleep(100);
-                break;
-            }
-        }
+    public ComboBox<String> getVerticalScalesComboBox() {
+        return verticalScalesComboBox;
     }
 
     @Override
