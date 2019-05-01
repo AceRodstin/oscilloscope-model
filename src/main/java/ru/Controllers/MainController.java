@@ -7,10 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import org.controlsfx.control.StatusBar;
 import ru.Models.GraphModel;
 import ru.Models.SignalModel;
@@ -26,6 +23,8 @@ public class MainController implements BaseController {
     private Label amplitudeLabel;
     @FXML
     private TextField amplitudeTextField;
+    @FXML
+    private Label checkIcon;
     @FXML
     private ComboBox<String> filterComboBox;
     @FXML
@@ -45,6 +44,8 @@ public class MainController implements BaseController {
     @FXML
     private TextField phaseTextField;
     @FXML
+    private ProgressIndicator progressIndicator;
+    @FXML
     private ComboBox<String> signalTypeComboBox;
     @FXML
     private Label signalTypeLabel;
@@ -52,11 +53,13 @@ public class MainController implements BaseController {
     private StatusBar statusBar;
     @FXML
     private ComboBox<String> verticalScalesComboBox;
+    @FXML
+    private Label warningIcon;
 
     private int buttonPressedCounter;
     private ControllerManager controllerManager;
     private GraphController graphController = new GraphController(this);
-    private Thread showSignal;
+    private Thread showSignal = new Thread();
     private boolean signalParametersSet;
     private SignalModel signalModel = new SignalModel();
     private StatusBarLine statusBarLine = new StatusBarLine();
@@ -103,9 +106,56 @@ public class MainController implements BaseController {
     }
 
     public void handleGenerate() {
+        checkEmptyTextFields();
+        setStatusBar();
         show();
-        buttonPressedCounter++;
         checkGenerationState();
+    }
+
+    private void checkEmptyTextFields() {
+        if (amplitudeTextField.getText().isEmpty() ||
+                frequencyTextField.getText().isEmpty() ||
+                phaseTextField.getText().isEmpty()) {
+            Platform.runLater(() -> statusBarLine.setStatus("Перед генерацией необходимо указать параметры сигнала",
+                    statusBar, checkIcon, warningIcon));
+            signalParametersSet = false;
+        } else {
+            signalParametersSet = true;
+            buttonPressedCounter++;
+        }
+    }
+
+    private void setStatusBar() {
+        if (buttonPressedCounter % 2 != 0 && signalParametersSet) {
+            toggleProgressIndicatorState(false);
+            Platform.runLater(() -> statusBarLine.setStatus("Генерация сигнала", statusBar));
+        } else if (buttonPressedCounter % 2 == 0 && signalParametersSet){
+            toggleProgressIndicatorState(true);
+            statusBarLine.setStatusOk(true);
+            Platform.runLater(() -> statusBarLine.setStatus("Генерация сигнала остановлена", statusBar,
+                    checkIcon, warningIcon));
+        }
+    }
+
+    private void toggleProgressIndicatorState(boolean isHidden) {
+        if (isHidden) {
+            progressIndicator.setStyle("-fx-opacity: 0;");
+        } else {
+            progressIndicator.setStyle("-fx-opacity: 1;");
+        }
+    }
+
+    private void checkGenerationState() {
+        if (buttonPressedCounter % 2 == 0 && signalParametersSet) {
+            controllerManager.setFinished(true);
+            showSignal.interrupt();
+            generateButton.setText("Генерировать");
+            toggleUiElementsState(false);
+        } else if (signalParametersSet){
+            controllerManager.setFinished(false);
+            generateButton.setText("Остановить генерацию");
+            toggleUiElementsState(true);
+        }
     }
 
     private void toggleUiElementsState(boolean isDisable) {
@@ -122,7 +172,6 @@ public class MainController implements BaseController {
     private void show() {
         showSignal = new Thread(() -> {
             while (!controllerManager.isFinished()) {
-                checkEmptyTextFields();
                 if (signalParametersSet) {
                     clearGraph();
                     parseSignalParameters();
@@ -133,30 +182,6 @@ public class MainController implements BaseController {
         });
 
         showSignal.start();
-    }
-
-    private void checkGenerationState() {
-        if (buttonPressedCounter % 2 == 0) {
-            controllerManager.setFinished(true);
-            showSignal.interrupt();
-            generateButton.setText("Генерировать");
-            toggleUiElementsState(false);
-        } else {
-            controllerManager.setFinished(false);
-            generateButton.setText("Остановить генерацию");
-            toggleUiElementsState(true);
-        }
-    }
-
-    private void checkEmptyTextFields() {
-        if (amplitudeTextField.getText().isEmpty() ||
-                frequencyTextField.getText().isEmpty() ||
-                phaseTextField.getText().isEmpty()) {
-            Platform.runLater(() -> statusBarLine.setStatus("Перед генерацией необходимо указать параметры сигнала", statusBar));
-            signalParametersSet = false;
-        } else {
-            signalParametersSet = true;
-        }
     }
 
     private void clearGraph() {

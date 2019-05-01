@@ -6,6 +6,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressIndicator?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -82,9 +83,9 @@
             </Label>
             <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="wrapper" stylesheets="@../css/main.css" GridPane.columnIndex="8" GridPane.columnSpan="7" GridPane.rowIndex="4" GridPane.rowSpan="6" />
             <Label fx:id="amplitudeLabel" text="Амплитуда, В:" GridPane.columnIndex="9" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
-            <TextField fx:id="amplitudeTextField" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" text="1" GridPane.columnIndex="9" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
+            <TextField fx:id="amplitudeTextField" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" text="4" GridPane.columnIndex="9" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
             <Label fx:id="frequencyLabel" text="Частота, Гц:" GridPane.columnIndex="11" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
-            <TextField fx:id="frequencyTextField" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" text="1" GridPane.columnIndex="11" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
+            <TextField fx:id="frequencyTextField" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" text="10" GridPane.columnIndex="11" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
             <Label fx:id="phaseLabel" text="Фаза, °:" GridPane.columnIndex="13" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
             <TextField fx:id="phaseTextField" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" text="0" GridPane.columnIndex="13" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
             <Label fx:id="signalTypeLabel" text="Тип сигнала:" GridPane.columnIndex="9" GridPane.halignment="CENTER" GridPane.rowIndex="7" />
@@ -94,7 +95,10 @@
                   <Font name="Arial" size="16.0" />
                </font>
             </Button>
-            <StatusBar fx:id="statusBar" text="" GridPane.columnSpan="13" GridPane.rowIndex="12" />
+            <StatusBar fx:id="statusBar" text="" GridPane.columnSpan="15" GridPane.rowIndex="12" />
+            <ProgressIndicator fx:id="progressIndicator" maxWidth="15.0" mouseTransparent="true" style="-fx-opacity: 0;" GridPane.rowIndex="12" />
+            <Label fx:id="warningIcon" alignment="CENTER" contentDisplay="CENTER" style="-fx-font-size: 22px; -fx-opacity: 0;" text="⚠︎" GridPane.rowIndex="12" />
+            <Label fx:id="checkIcon" style="-fx-font-size: 26px; -fx-opacity: 0;" text="✔" GridPane.rowIndex="12" />
          </children>
       </GridPane>
    </children>
