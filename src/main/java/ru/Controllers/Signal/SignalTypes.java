@@ -1,4 +1,4 @@
-package ru.Controllers;
+package ru.Controllers.Signal;
 
 public enum SignalTypes {
     SINE("Синусоидальный"), PULSE("Импульсный"), TRIANGLES("Треугольный"), SAW("Пила"), NOISE("Шум");

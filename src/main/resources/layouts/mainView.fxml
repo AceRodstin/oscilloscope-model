@@ -75,7 +75,7 @@
             <Label text="Отображать:" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
             <ComboBox fx:id="graphTypeComboBox" prefWidth="150.0" GridPane.columnIndex="5" GridPane.rowIndex="5" />
             <Label text="Цифровой фильтр:" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="7" />
-            <ComboBox fx:id="filterComboBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+            <ComboBox fx:id="filterTypesComboBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
             <Label styleClass="title" text="Настройки сигнала:" GridPane.columnIndex="8" GridPane.columnSpan="7" GridPane.halignment="CENTER" GridPane.rowIndex="3">
                <font>
                   <Font name="Arial Bold" size="16.0" />
@@ -88,8 +88,12 @@
             <TextField fx:id="frequencyTextField" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" text="10" GridPane.columnIndex="11" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
             <Label fx:id="phaseLabel" text="Фаза, °:" GridPane.columnIndex="13" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
             <TextField fx:id="phaseTextField" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" text="0" GridPane.columnIndex="13" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
-            <Label fx:id="signalTypeLabel" text="Тип сигнала:" GridPane.columnIndex="9" GridPane.halignment="CENTER" GridPane.rowIndex="7" />
-            <ComboBox fx:id="signalTypeComboBox" prefWidth="150.0" GridPane.columnIndex="9" GridPane.rowIndex="8" />
+            <Label fx:id="dcLabel" text="Статика, В:" GridPane.columnIndex="9" GridPane.halignment="CENTER" GridPane.rowIndex="7" />
+            <TextField fx:id="dcTextField" text="0" GridPane.columnIndex="9" GridPane.rowIndex="8" />
+            <Label fx:id="signalTypeLabel" text="Тип сигнала:" GridPane.columnIndex="11" GridPane.halignment="CENTER" GridPane.rowIndex="7" />
+            <ComboBox fx:id="signalTypeComboBox" prefWidth="150.0" GridPane.columnIndex="11" GridPane.rowIndex="8" />
+            <Label fx:id="noiseLabel" text="Помеха:" GridPane.columnIndex="13" GridPane.halignment="CENTER" GridPane.rowIndex="7" />
+            <ComboBox fx:id="noiseTypesComboBox" prefWidth="150.0" GridPane.columnIndex="13" GridPane.rowIndex="8" />
             <Button fx:id="generateButton" mnemonicParsing="false" onAction="#handleGenerate" prefHeight="50.0" prefWidth="250.0" text="Генерировать" GridPane.columnSpan="15" GridPane.halignment="CENTER" GridPane.rowIndex="11" GridPane.valignment="BOTTOM">
                <font>
                   <Font name="Arial" size="16.0" />

@@ -1,11 +1,13 @@
-package ru.Controllers;
+package ru.Controllers.Graph;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.ComboBox;
+import ru.Controllers.MainController;
 import ru.Models.GraphModel;
 import ru.Utils.Utils;
 
@@ -20,7 +22,19 @@ public class GraphController {
         graphModel = new GraphModel();
     }
 
-    public void initComboBoxes() {
+    public void initialize() {
+        initGraph();
+        initComboBoxes();
+    }
+
+    private void initGraph() {
+        LineChart<Number, Number> graph = mainController.getGraph();
+        XYChart.Series<Number, Number> series = mainController.getSignalController().getSignalModel().getGraphSeries();
+
+        graph.getData().add(series);
+    }
+
+    private void initComboBoxes() {
         setVerticalScales();
         setHorizontalSignalScales();
         setDefaultScales();
@@ -28,6 +42,7 @@ public class GraphController {
         listenScalesComboBox(mainController.getHorizontalScalesComboBox());
         setGraphTypes();
         listenGraphTypes();
+        setFilterTypes();
     }
 
     private void setVerticalScales() {
@@ -103,11 +118,11 @@ public class GraphController {
             if (selectedType.equals(GraphTypes.SIGNAL.getTypeName())) {
                 setHorizontalSignalScales();
                 setSignalTitles();
-                mainController.restartShowDataThread();
+                restartShowDataThread();
             } else if (selectedType.equals(GraphTypes.SPECTRUM.getTypeName())) {
                 setHorizontalSpectrumScales();
                 setSpectrumTitles();
-                mainController.restartShowDataThread();
+                restartShowDataThread();
             }
         });
     }
@@ -124,7 +139,7 @@ public class GraphController {
         scales.add("100 Гц/дел");
 
         mainController.getHorizontalScalesComboBox().setItems(scales);
-        mainController.getHorizontalScalesComboBox().getSelectionModel().select(0);
+        mainController.getHorizontalScalesComboBox().getSelectionModel().select(2);
     }
 
     private void setSpectrumTitles() {
@@ -139,14 +154,30 @@ public class GraphController {
         mainController.getGraph().getXAxis().setLabel("Время, с");
     }
 
+    private void restartShowDataThread() {
+        mainController.getControllerManager().setFinished(true);
+        mainController.getShowSignalThread().interrupt();
+        Utils.sleep(100);
+        mainController.getControllerManager().setFinished(false);
+        mainController.show();
+    }
+
+    private void setFilterTypes() {
+        ObservableList<String> types = FXCollections.observableArrayList();
+
+        types.add(FilterTypes.NONE.getTypeName());
+
+        mainController.getFilterTypesComboBox().setItems(types);
+        mainController.getFilterTypesComboBox().getSelectionModel().select(0);
+    }
 
     public void showSignal() {
         String graphType = mainController.getGraphTypeComboBox().getSelectionModel().getSelectedItem();
         boolean isFFT = graphType.equals(GraphTypes.SPECTRUM.getTypeName());
-        List<XYChart.Data<Number, Number>> intermediateList = mainController.getSignalModel().getIntermediateList();
-        XYChart.Series<Number, Number> graphSeries = mainController.getSignalModel().getGraphSeries();
+        List<XYChart.Data<Number, Number>> intermediateList = mainController.getSignalController().getSignalModel().getIntermediateList();
+        XYChart.Series<Number, Number> graphSeries = mainController.getSignalController().getSignalModel().getGraphSeries();
 
-        mainController.getSignalModel().fillIntermediateList(isFFT);
+        mainController.getSignalController().getSignalModel().fillIntermediateList(isFFT);
         graphModel.parseScale(mainController.getHorizontalScalesComboBox().getSelectionModel().getSelectedItem());
         graphModel.calculateBounds();
 
@@ -154,7 +185,7 @@ public class GraphController {
             graphSeries.getData().add(new XYChart.Data<>(0, 0));
         }
 
-        int rarefactionCoefficient = mainController.getSignalModel().getRarefactionCoefficient();
+        int rarefactionCoefficient = mainController.getSignalController().getSignalModel().getRarefactionCoefficient();
         for (int index = 0; index < intermediateList.size(); index += rarefactionCoefficient) {
             if (mainController.getControllerManager().isFinished()) {
                 Platform.runLater(() -> graphSeries.getData().clear());
@@ -189,7 +220,7 @@ public class GraphController {
 
             if (index == intermediateList.size() - rarefactionCoefficient) {
                 XYChart.Data<Number, Number> lastPoint = new XYChart.Data<>(graphModel.getUpperBound(),
-                        intermediateList.get(0).getYValue());
+                        intermediateList.get(index).getYValue());
                 Platform.runLater(() -> graphSeries.getData().add(lastPoint));
                 Utils.sleep(1000);
             } else if ((double) point.getXValue() >= graphModel.getUpperBound()) {
@@ -199,4 +230,14 @@ public class GraphController {
             }
         }
     }
+
+    public void clearGraph() {
+        Platform.runLater(() -> {
+            mainController.getSignalController().getSignalModel().getIntermediateList().clear();
+            mainController.getSignalController().getSignalModel().getGraphSeries().getData().clear();
+        });
+        Utils.sleep(50);
+    }
+
+
 }

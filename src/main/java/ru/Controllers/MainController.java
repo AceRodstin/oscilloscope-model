@@ -1,22 +1,15 @@
 package ru.Controllers;
 
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
-import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import org.controlsfx.control.StatusBar;
-import ru.Models.GraphModel;
-import ru.Models.SignalModel;
+import ru.Controllers.Graph.GraphController;
+import ru.Controllers.Signal.SignalController;
 import ru.Utils.BaseController;
 import ru.Utils.ControllerManager;
 import ru.Utils.StatusBarLine;
-import ru.Utils.Utils;
-
-import java.util.List;
 
 public class MainController implements BaseController {
     @FXML
@@ -26,7 +19,11 @@ public class MainController implements BaseController {
     @FXML
     private Label checkIcon;
     @FXML
-    private ComboBox<String> filterComboBox;
+    private Label dcLabel;
+    @FXML
+    private TextField dcTextField;
+    @FXML
+    private ComboBox<String> filterTypesComboBox;
     @FXML
     private Label frequencyLabel;
     @FXML
@@ -39,6 +36,10 @@ public class MainController implements BaseController {
     private ComboBox<String> graphTypeComboBox;
     @FXML
     private ComboBox<String> horizontalScalesComboBox;
+    @FXML
+    private Label noiseLabel;
+    @FXML
+    private ComboBox<String> noiseTypesComboBox;
     @FXML
     private Label phaseLabel;
     @FXML
@@ -60,68 +61,30 @@ public class MainController implements BaseController {
     private ControllerManager controllerManager;
     private GraphController graphController = new GraphController(this);
     private Thread showSignal = new Thread();
+    private SignalController signalController = new SignalController(this);
     private boolean signalParametersSet;
-    private SignalModel signalModel = new SignalModel();
     private StatusBarLine statusBarLine = new StatusBarLine();
 
     public void initialize() {
-        initializeGraph();
-        graphController.initComboBoxes();
-        addDigitFiltersToTextFields();
-        setSignalTypes();
-    }
-
-    private void initializeGraph() {
-        graph.getData().add(signalModel.getGraphSeries());
-    }
-
-
-    private void addDigitFiltersToTextFields() {
-        setDigitFilter(amplitudeTextField);
-        setDigitFilter(frequencyTextField);
-        setDigitFilter(phaseTextField);
-    }
-
-
-    private void setDigitFilter(TextField textField) {
-        textField.textProperty().addListener((observable, oldValue, newValue) -> {
-            textField.setText(newValue.replaceAll("[^-\\d(\\.|,)]", ""));
-            if (!newValue.matches("^-?[\\d]+(\\.|,)\\d+|^-?[\\d]+(\\.|,)|^-?[\\d]+|-|$")) {
-                textField.setText(oldValue);
-            }
-        });
-    }
-
-    private void setSignalTypes() {
-        ObservableList<String> types = FXCollections.observableArrayList();
-
-        types.add(SignalTypes.SINE.getTypeName());
-        types.add(SignalTypes.PULSE.getTypeName());
-        types.add(SignalTypes.TRIANGLES.getTypeName());
-        types.add(SignalTypes.SAW.getTypeName());
-        types.add(SignalTypes.NOISE.getTypeName());
-
-        signalTypeComboBox.setItems(types);
-        signalTypeComboBox.getSelectionModel().select(0);
+        graphController.initialize();
+        signalController.initialize();
     }
 
     public void handleGenerate() {
-        checkEmptyTextFields();
+        checkSignalParameters();
         setStatusBar();
         show();
         checkGenerationState();
     }
 
-    private void checkEmptyTextFields() {
-        if (amplitudeTextField.getText().isEmpty() ||
-                frequencyTextField.getText().isEmpty() ||
-                phaseTextField.getText().isEmpty()) {
+    private void checkSignalParameters() {
+        signalParametersSet = !signalController.checkEmptyTextFields();
+
+        if (!signalController.checkEmptyTextFields()) {
+            buttonPressedCounter++;
+        } else {
             Platform.runLater(() -> statusBarLine.setStatus("Перед генерацией необходимо указать параметры сигнала",
                     statusBar, checkIcon, warningIcon));
-            signalParametersSet = false;
-        } else {
-            signalParametersSet = true;
-            buttonPressedCounter++;
         }
     }
 
@@ -129,7 +92,7 @@ public class MainController implements BaseController {
         if (buttonPressedCounter % 2 != 0 && signalParametersSet) {
             toggleProgressIndicatorState(false);
             Platform.runLater(() -> statusBarLine.setStatus("Генерация сигнала", statusBar));
-        } else if (buttonPressedCounter % 2 == 0 && signalParametersSet){
+        } else if (buttonPressedCounter % 2 == 0 && signalParametersSet) {
             toggleProgressIndicatorState(true);
             statusBarLine.setStatusOk(true);
             Platform.runLater(() -> statusBarLine.setStatus("Генерация сигнала остановлена", statusBar,
@@ -151,7 +114,7 @@ public class MainController implements BaseController {
             showSignal.interrupt();
             generateButton.setText("Генерировать");
             toggleUiElementsState(false);
-        } else if (signalParametersSet){
+        } else if (signalParametersSet) {
             controllerManager.setFinished(false);
             generateButton.setText("Остановить генерацию");
             toggleUiElementsState(true);
@@ -161,21 +124,24 @@ public class MainController implements BaseController {
     private void toggleUiElementsState(boolean isDisable) {
         amplitudeLabel.setDisable(isDisable);
         amplitudeTextField.setDisable(isDisable);
+        dcLabel.setDisable(isDisable);
+        dcTextField.setDisable(isDisable);
         frequencyLabel.setDisable(isDisable);
         frequencyTextField.setDisable(isDisable);
+        noiseLabel.setDisable(isDisable);
+        noiseTypesComboBox.setDisable(isDisable);
         phaseLabel.setDisable(isDisable);
         phaseTextField.setDisable(isDisable);
         signalTypeComboBox.setDisable(isDisable);
         signalTypeLabel.setDisable(isDisable);
     }
 
-    private void show() {
+    public void show() {
         showSignal = new Thread(() -> {
             while (!controllerManager.isFinished()) {
                 if (signalParametersSet) {
-                    clearGraph();
-                    parseSignalParameters();
-                    signalModel.generateSignal(signalTypeComboBox.getSelectionModel().getSelectedItem());
+                    signalController.generateSignal();
+                    graphController.clearGraph();
                     graphController.showSignal();
                 }
             }
@@ -184,34 +150,60 @@ public class MainController implements BaseController {
         showSignal.start();
     }
 
-    private void clearGraph() {
-        Platform.runLater(() -> {
-            signalModel.getIntermediateList().clear();
-            signalModel.getGraphSeries().getData().clear();
-        });
-        Utils.sleep(50);
+    public Label getAmplitudeLabel() {
+        return amplitudeLabel;
     }
 
-    private void parseSignalParameters() {
-        signalModel.setAmplitude(Double.parseDouble(amplitudeTextField.getText()));
-        signalModel.setFrequency(Double.parseDouble(frequencyTextField.getText()));
-        signalModel.setPhase(Double.parseDouble(phaseTextField.getText()));
+    public TextField getAmplitudeTextField() {
+        return amplitudeTextField;
     }
 
-    public void restartShowDataThread() {
-        controllerManager.setFinished(true);
-        showSignal.interrupt();
-        Utils.sleep(100);
-        controllerManager.setFinished(false);
-        show();
+    public Label getDcLabel() {
+        return dcLabel;
+    }
+
+    public TextField getDcTextField() {
+        return dcTextField;
+    }
+
+    public Label getFrequencyLabel() {
+        return frequencyLabel;
+    }
+
+    public TextField getFrequencyTextField() {
+        return frequencyTextField;
+    }
+
+    public Label getNoiseLabel() {
+        return noiseLabel;
+    }
+
+    public ComboBox<String> getNoiseTypesComboBox() {
+        return noiseTypesComboBox;
+    }
+
+    public Label getPhaseLabel() {
+        return phaseLabel;
+    }
+
+    public TextField getPhaseTextField() {
+        return phaseTextField;
+    }
+
+    public ComboBox<String> getSignalTypeComboBox() {
+        return signalTypeComboBox;
+    }
+
+    public Label getSignalTypeLabel() {
+        return signalTypeLabel;
     }
 
     public ControllerManager getControllerManager() {
         return controllerManager;
     }
 
-    public ComboBox<String> getFilterComboBox() {
-        return filterComboBox;
+    public ComboBox<String> getFilterTypesComboBox() {
+        return filterTypesComboBox;
     }
 
     public LineChart<Number, Number> getGraph() {
@@ -226,8 +218,12 @@ public class MainController implements BaseController {
         return horizontalScalesComboBox;
     }
 
-    public SignalModel getSignalModel() {
-        return signalModel;
+    public Thread getShowSignalThread() {
+        return showSignal;
+    }
+
+    public SignalController getSignalController() {
+        return signalController;
     }
 
     public ComboBox<String> getVerticalScalesComboBox() {

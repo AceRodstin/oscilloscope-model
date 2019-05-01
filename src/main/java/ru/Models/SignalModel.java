@@ -3,23 +3,30 @@ package ru.Models;
 import javafx.scene.chart.XYChart;
 import org.vitrivr.cineast.core.util.dsp.fft.FFT;
 import org.vitrivr.cineast.core.util.dsp.fft.windows.HanningWindow;
-import ru.Controllers.SignalTypes;
+import ru.Controllers.Signal.NoiseTypes;
+import ru.Controllers.Signal.SignalTypes;
 
 import java.util.*;
 
 public class SignalModel {
     private double amplitude;
+    private double dc;
     private FFT fft = new FFT();
     private double frequency;
     private XYChart.Series<Number, Number> graphSeries = new XYChart.Series<>();
     private HanningWindow hanningWindow = new HanningWindow();
     private List<XYChart.Data<Number, Number>> intermediateList = new ArrayList<>();
+    private double noiseCoefficient;
+    private String noiseType;
     private double phase;
     private Random random = new Random();
-    private final int SAMPLES = 7680;
-    private double[] signal = new double[SAMPLES];
+    private int samples;
+    private double[] signal;
 
     public void generateSignal(String signalType) {
+        defineSamplesRate();
+        signal = new double[samples];
+
         if (signalType.equals(SignalTypes.SINE.getTypeName())) {
             generateSin();
         } else if (signalType.equals(SignalTypes.PULSE.getTypeName())) {
@@ -33,46 +40,78 @@ public class SignalModel {
         }
     }
 
-    private void generateSin() {
-        double channelPhase = Math.toRadians(phase);
+    private void defineSamplesRate() {
+        if (frequency <= 10) {
+            samples = 3000;
+        } else if (frequency > 10 && frequency <= 50) {
+            samples = 5000;
+        } else if (frequency > 50 && frequency <= 100) {
+            samples = 7000;
+        } else if (frequency > 100 && frequency <= 200) {
+            samples = 10000;
+        } else if (frequency > 200 && frequency <= 500) {
+            samples = 25000;
+        } else if (frequency > 500) {
+            samples = 35000;
+        }
+    }
 
-        for (int i = 0; i < SAMPLES; i++) {
-            signal[i] = amplitude * Math.sin(2 * Math.PI * frequency * i / SAMPLES + channelPhase);
+    private void generateSin() {
+        for (int i = 0; i < samples; i++) {
+            setNoise();
+            double channelPhase = Math.toRadians(phase);
+            signal[i] = dc + (amplitude + noiseCoefficient) * Math.sin(2 * Math.PI * frequency * i / samples + channelPhase);
         }
     }
 
     private void generatePulse() {
-        double channelPhase = Math.toRadians(phase);
-
-        for (int i = 0; i < SAMPLES; i++) {
-            signal[i] = amplitude * Math.signum(Math.sin(2 * Math.PI * frequency * i / SAMPLES + channelPhase));
+        for (int i = 0; i < samples; i++) {
+            setNoise();
+            double channelPhase = Math.toRadians(phase);
+            signal[i] = dc + (amplitude + noiseCoefficient) * Math.signum(Math.sin(2 * Math.PI * frequency * i / samples + channelPhase));
         }
     }
 
     private void generateTriangles() {
-        double channelPhase = Math.toRadians(phase);
-
-        for (int i = 0; i < SAMPLES; i++) {
-            signal[i] = (2 * amplitude) / Math.PI * Math.asin(Math.sin(2 * Math.PI * frequency * i / SAMPLES
+        for (int i = 0; i < samples; i++) {
+            setNoise();
+            double channelPhase = Math.toRadians(phase);
+            signal[i] = dc + (2 * (amplitude + noiseCoefficient)) / Math.PI * Math.asin(Math.sin(2 * Math.PI * frequency * i / samples
                     + channelPhase));
         }
     }
 
     private void generateSaw() {
-        double channelPhase = Math.toRadians(phase);
-
-        for (int i = 0; i < SAMPLES; i++) {
-            signal[i] = (-2 * amplitude) / Math.PI * Math.atan(1.0 / Math.tan((double) i / SAMPLES * Math.PI * frequency
+        for (int i = 0; i < samples; i++) {
+            setNoise();
+            double channelPhase = Math.toRadians(phase);
+            signal[i] = dc + (-2 * (amplitude + noiseCoefficient)) / Math.PI * Math.atan(1.0 / Math.tan((double) i / samples * Math.PI * frequency
                     + channelPhase));
         }
     }
 
     private void generateNoise() {
-        double channelPhase = Math.toRadians(phase);
+        for (int i = 0; i < samples; i++) {
+            setNoise();
+            double channelPhase = Math.toRadians(phase);
+            signal[i] = dc + (amplitude + noiseCoefficient) * random.nextDouble() * Math.sin(2 * Math.PI * (frequency + random.nextDouble()) *
+                    i / samples + channelPhase);
+        }
+    }
 
-        for (int i = 0; i < SAMPLES; i++) {
-            signal[i] = amplitude * random.nextDouble() * Math.sin(2 * Math.PI * (frequency + random.nextDouble()) *
-                    i / SAMPLES + channelPhase);
+    private void setNoise() {
+        if (noiseType.equals(NoiseTypes.LOW.getTypeName())) {
+            noiseCoefficient = amplitude * 0.15 * random.nextDouble();
+        } else if (noiseType.equals(NoiseTypes.MIDDLE.getTypeName())) {
+            noiseCoefficient = amplitude * 0.25 * random.nextDouble();
+            dc += 0.05 * random.nextDouble();
+            dc -= 0.05 * random.nextDouble();
+        } else if (noiseType.equals(NoiseTypes.HIGH.getTypeName())) {
+            noiseCoefficient = amplitude * (0.05 * random.nextDouble() + random.nextDouble());
+            phase += 5 * random.nextDouble();
+            phase -= 5 * random.nextDouble();
+            dc += 0.1 * random.nextDouble();
+            dc -= 0.1 * random.nextDouble();
         }
     }
 
@@ -86,7 +125,7 @@ public class SignalModel {
             }
         } else {
             for (int i = 0; i < signal.length; i++) {
-                intermediateList.add(new XYChart.Data<>((double) i / SAMPLES, signal[i]));
+                intermediateList.add(new XYChart.Data<>((double) i / samples, signal[i]));
             }
         }
     }
@@ -117,12 +156,20 @@ public class SignalModel {
         this.amplitude = amplitude;
     }
 
+    public void setDc(double dc) {
+        this.dc = dc;
+    }
+
     public double getFrequency() {
         return frequency;
     }
 
     public void setFrequency(double frequency) {
         this.frequency = frequency;
+    }
+
+    public void setNoiseType(String noiseType) {
+        this.noiseType = noiseType;
     }
 
     public void setPhase(double phase) {

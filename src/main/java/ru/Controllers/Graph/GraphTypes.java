@@ -1,4 +1,4 @@
-package ru.Controllers;
+package ru.Controllers.Graph;
 
 public enum GraphTypes {
     SIGNAL("Сигнал"), SPECTRUM("Спектр");
