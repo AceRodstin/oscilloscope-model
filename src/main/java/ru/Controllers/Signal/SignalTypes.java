@@ -1,7 +1,7 @@
 package ru.Controllers.Signal;
 
 public enum SignalTypes {
-    SINE("Синусоидальный"), PULSE("Импульсный"), TRIANGLES("Треугольный"), SAW("Пила"), NOISE("Шум");
+    SINE("Синусоида"), PULSE("Импульсный"), TRIANGLES("Треугольный"), SAW("Пила"), NOISE("Шум");
 
     private String typeName;
 

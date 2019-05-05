@@ -5,15 +5,47 @@
 
 .status-bar {
 	-fx-background-color: none;
-	-fx-border-radius: 3px;
+	-fx-border-radius: 5px;
 }
 
 .wrapper {
-    -fx-border-radius: 3px;
+    -fx-border-radius: 5px;
     -fx-border-color: #7D7D7D;
 }
 
 .chart-title {
 	-fx-font-family: "Arial Bold";
 	-fx-font-size: 16px;
+}
+
+.context-menu  {
+	-fx-min-width: 100px;
+	-fx-padding: 5 0 5 0;
+	-fx-border-color: #7D7D7D;
+	-fx-border-radius: 6px;
+	-fx-background-radius: 6px;
+	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 20, 0, 0, 0);
+}
+
+.context-menu .separator:horizontal .line {
+	-fx-border-insets: 5 0 4 0;
+	-fx-max-height: 1px;
+}
+
+.combo-box-popup > .list-view {
+	-fx-min-width: 100px;
+	-fx-padding: 5 0 5 0;
+	-fx-border-color: #7D7D7D;
+	-fx-border-radius: 6px;
+	-fx-background-radius: 6px;
+	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 20, 0, 0, 0);
+}
+
+.combo-box-popup  > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:selected,
+.combo-box-popup  > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:selected:hover {
+	-fx-background-color: -fx-background;
+}
+
+.combo-box-base, .text-field, .button {
+	-fx-background-radius: 6px;
 }
