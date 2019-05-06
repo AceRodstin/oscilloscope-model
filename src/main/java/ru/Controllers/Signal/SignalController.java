@@ -95,6 +95,20 @@ public class SignalController {
         noiseType = mainController.getNoiseTypesComboBox().getSelectionModel().getSelectedItem();
     }
 
+    public void showSignalParameters() {
+        signalModel.calculateSignalParameters();
+
+        String amplitude = String.valueOf(signalModel.getAmplitude());
+        String dc = String.valueOf(signalModel.getDc());
+        String frequency = String.valueOf(signalModel.getReceivedFrequency());
+        String rms = String.valueOf(signalModel.getRms());
+
+        mainController.getReceivedAmplitudeTextField().setText(amplitude);
+        mainController.getReceivedDCTextField().setText(dc);
+        mainController.getReceivedFrequencyTextField().setText(frequency);
+        mainController.getReceivedRMSTextField().setText(rms);
+    }
+
     public SignalModel getSignalModel() {
         return signalModel;
     }

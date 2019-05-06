@@ -1,7 +1,6 @@
 package ru.Models;
 
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.ContextMenu;
 import org.vitrivr.cineast.core.util.dsp.fft.FFT;
 import org.vitrivr.cineast.core.util.dsp.fft.windows.HanningWindow;
 import ru.Controllers.Signal.NoiseTypes;
@@ -22,6 +21,7 @@ public class SignalModel {
     private double phase;
     private Random random = new Random();
     private int samples;
+    private SignalParametersModel signalParametersModel = new SignalParametersModel();
     private double[] signal;
 
     public void generateSignal(String signalType) {
@@ -145,6 +145,10 @@ public class SignalModel {
         return rarefactionCoefficient;
     }
 
+    public void calculateSignalParameters() {
+        signalParametersModel.calculateParameters(signal);
+    }
+
     public XYChart.Series<Number, Number> getGraphSeries() {
         return graphSeries;
     }
@@ -153,16 +157,32 @@ public class SignalModel {
         return intermediateList;
     }
 
+    public double getAmplitude() {
+        return signalParametersModel.getAmplitude();
+    }
+
+    public double getDc() {
+        return signalParametersModel.getDc();
+    }
+
+    public double getFrequency() {
+        return frequency;
+    }
+
+    public double getReceivedFrequency() {
+        return signalParametersModel.getFrequency();
+    }
+
+    public double getRms() {
+        return signalParametersModel.getRms();
+    }
+
     public void setAmplitude(double amplitude) {
         this.amplitude = amplitude;
     }
 
     public void setDc(double dc) {
         this.dc = dc;
-    }
-
-    public double getFrequency() {
-        return frequency;
     }
 
     public void setFrequency(double frequency) {

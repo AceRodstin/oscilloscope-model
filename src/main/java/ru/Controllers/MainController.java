@@ -25,6 +25,8 @@ public class MainController implements BaseController {
     @FXML
     private ComboBox<String> filterTypesComboBox;
     @FXML
+    private Label filterTypesLabel;
+    @FXML
     private Label frequencyLabel;
     @FXML
     private TextField frequencyTextField;
@@ -35,7 +37,11 @@ public class MainController implements BaseController {
     @FXML
     private ComboBox<String> graphTypeComboBox;
     @FXML
+    private Label graphTypeLabel;
+    @FXML
     private ComboBox<String> horizontalScalesComboBox;
+    @FXML
+    private Label horizontalScalesLabel;
     @FXML
     private Label noiseLabel;
     @FXML
@@ -47,6 +53,22 @@ public class MainController implements BaseController {
     @FXML
     private ProgressIndicator progressIndicator;
     @FXML
+    private Label receivedAmplitudeLabel;
+    @FXML
+    private TextField receivedAmplitudeTextField;
+    @FXML
+    private Label receivedDCLabel;
+    @FXML
+    private TextField receivedDCTextField;
+    @FXML
+    private Label receivedFrequencyLabel;
+    @FXML
+    private TextField receivedFrequencyTextField;
+    @FXML
+    private Label receivedRMSLabel;
+    @FXML
+    private TextField receivedRMSTextField;
+    @FXML
     private ComboBox<String> signalTypeComboBox;
     @FXML
     private Label signalTypeLabel;
@@ -54,6 +76,8 @@ public class MainController implements BaseController {
     private StatusBar statusBar;
     @FXML
     private ComboBox<String> verticalScalesComboBox;
+    @FXML
+    private Label verticalScalesLabel;
     @FXML
     private Label warningIcon;
 
@@ -122,6 +146,15 @@ public class MainController implements BaseController {
     }
 
     private void toggleUiElementsState(boolean isDisable) {
+        verticalScalesLabel.setDisable(!isDisable);
+        verticalScalesComboBox.setDisable(!isDisable);
+        horizontalScalesLabel.setDisable(!isDisable);
+        horizontalScalesComboBox.setDisable(!isDisable);
+        graphTypeLabel.setDisable(!isDisable);
+        graphTypeComboBox.setDisable(!isDisable);
+        filterTypesLabel.setDisable(!isDisable);
+        filterTypesComboBox.setDisable(!isDisable);
+
         amplitudeLabel.setDisable(isDisable);
         amplitudeTextField.setDisable(isDisable);
         dcLabel.setDisable(isDisable);
@@ -134,6 +167,15 @@ public class MainController implements BaseController {
         phaseTextField.setDisable(isDisable);
         signalTypeComboBox.setDisable(isDisable);
         signalTypeLabel.setDisable(isDisable);
+
+        receivedAmplitudeLabel.setDisable(!isDisable);
+        receivedAmplitudeTextField.setDisable(!isDisable);
+        receivedDCLabel.setDisable(!isDisable);
+        receivedDCTextField.setDisable(!isDisable);
+        receivedFrequencyLabel.setDisable(!isDisable);
+        receivedFrequencyTextField.setDisable(!isDisable);
+        receivedRMSLabel.setDisable(!isDisable);
+        receivedRMSTextField.setDisable(!isDisable);
     }
 
     public void show() {
@@ -141,6 +183,7 @@ public class MainController implements BaseController {
             while (!controllerManager.isFinished()) {
                 if (signalParametersSet) {
                     signalController.generateSignal();
+                    signalController.showSignalParameters();
                     graphController.clearGraph();
                     graphController.showSignal();
                 }
@@ -188,6 +231,22 @@ public class MainController implements BaseController {
 
     public TextField getPhaseTextField() {
         return phaseTextField;
+    }
+
+    public TextField getReceivedAmplitudeTextField() {
+        return receivedAmplitudeTextField;
+    }
+
+    public TextField getReceivedDCTextField() {
+        return receivedDCTextField;
+    }
+
+    public TextField getReceivedFrequencyTextField() {
+        return receivedFrequencyTextField;
+    }
+
+    public TextField getReceivedRMSTextField() {
+        return receivedRMSTextField;
     }
 
     public ComboBox<String> getSignalTypeComboBox() {
