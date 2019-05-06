@@ -5,6 +5,9 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.TextField;
 import ru.Controllers.MainController;
 import ru.Models.SignalModel;
+import ru.Utils.Utils;
+
+import javax.rmi.CORBA.Util;
 
 public class SignalController {
     private MainController mainController;
@@ -98,15 +101,20 @@ public class SignalController {
     public void showSignalParameters() {
         signalModel.calculateSignalParameters();
 
-        String amplitude = String.valueOf(signalModel.getAmplitude());
-        String dc = String.valueOf(signalModel.getDc());
-        String frequency = String.valueOf(signalModel.getReceivedFrequency());
-        String rms = String.valueOf(signalModel.getRms());
+        int decimalFormatScale = getDecimalFormatScale();
+        double amplitude = Utils.roundValue(signalModel.getAmplitude(), decimalFormatScale);
+        double dc = Utils.roundValue(signalModel.getDc(), decimalFormatScale);
+        double frequency = Utils.roundValue(signalModel.getReceivedFrequency(), decimalFormatScale);
+        double rms = Utils.roundValue(signalModel.getRms(), decimalFormatScale);
 
-        mainController.getReceivedAmplitudeTextField().setText(amplitude);
-        mainController.getReceivedDCTextField().setText(dc);
-        mainController.getReceivedFrequencyTextField().setText(frequency);
-        mainController.getReceivedRMSTextField().setText(rms);
+        mainController.getReceivedAmplitudeTextField().setText(Utils.convertFromExponentialFormat(amplitude, decimalFormatScale));
+        mainController.getReceivedDCTextField().setText(Utils.convertFromExponentialFormat(dc, decimalFormatScale));
+        mainController.getReceivedFrequencyTextField().setText(Utils.convertFromExponentialFormat(frequency, decimalFormatScale));
+        mainController.getReceivedRMSTextField().setText(Utils.convertFromExponentialFormat(rms, decimalFormatScale));
+    }
+
+    public int getDecimalFormatScale() {
+        return (int) Math.pow(10, mainController.getDecimalFormatComboBox().getSelectionModel().getSelectedIndex() + 1);
     }
 
     public SignalModel getSignalModel() {

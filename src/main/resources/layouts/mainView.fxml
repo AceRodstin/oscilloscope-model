@@ -116,6 +116,8 @@
             <Label fx:id="warningIcon" alignment="CENTER" contentDisplay="CENTER" style="-fx-font-size: 22px; -fx-opacity: 0;" text="⚠︎" GridPane.rowIndex="15" />
             <Label fx:id="checkIcon" style="-fx-font-size: 26px; -fx-opacity: 0;" text="✔" GridPane.rowIndex="15" />
             <TextField fx:id="receivedRMSTextField" disable="true" GridPane.columnIndex="11" GridPane.rowIndex="5" />
+            <Label fx:id="decimalFormatLabel" disable="true" text="Десятичн. знаков:" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="11" />
+            <ComboBox fx:id="decimalFormatComboBox" disable="true" prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="12" />
          </children>
       </GridPane>
    </children>

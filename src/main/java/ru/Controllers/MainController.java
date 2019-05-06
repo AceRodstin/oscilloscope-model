@@ -23,6 +23,10 @@ public class MainController implements BaseController {
     @FXML
     private TextField dcTextField;
     @FXML
+    private ComboBox<String> decimalFormatComboBox;
+    @FXML
+    private Label decimalFormatLabel;
+    @FXML
     private ComboBox<String> filterTypesComboBox;
     @FXML
     private Label filterTypesLabel;
@@ -154,6 +158,8 @@ public class MainController implements BaseController {
         graphTypeComboBox.setDisable(!isDisable);
         filterTypesLabel.setDisable(!isDisable);
         filterTypesComboBox.setDisable(!isDisable);
+        decimalFormatComboBox.setDisable(!isDisable);
+        decimalFormatLabel.setDisable(!isDisable);
 
         amplitudeLabel.setDisable(isDisable);
         amplitudeTextField.setDisable(isDisable);
@@ -193,40 +199,28 @@ public class MainController implements BaseController {
         showSignal.start();
     }
 
-    public Label getAmplitudeLabel() {
-        return amplitudeLabel;
-    }
-
     public TextField getAmplitudeTextField() {
         return amplitudeTextField;
-    }
-
-    public Label getDcLabel() {
-        return dcLabel;
     }
 
     public TextField getDcTextField() {
         return dcTextField;
     }
 
-    public Label getFrequencyLabel() {
-        return frequencyLabel;
+    public ComboBox<String> getDecimalFormatComboBox() {
+        return decimalFormatComboBox;
+    }
+
+    public Label getDecimalFormatLabel() {
+        return decimalFormatLabel;
     }
 
     public TextField getFrequencyTextField() {
         return frequencyTextField;
     }
 
-    public Label getNoiseLabel() {
-        return noiseLabel;
-    }
-
     public ComboBox<String> getNoiseTypesComboBox() {
         return noiseTypesComboBox;
-    }
-
-    public Label getPhaseLabel() {
-        return phaseLabel;
     }
 
     public TextField getPhaseTextField() {
@@ -251,10 +245,6 @@ public class MainController implements BaseController {
 
     public ComboBox<String> getSignalTypeComboBox() {
         return signalTypeComboBox;
-    }
-
-    public Label getSignalTypeLabel() {
-        return signalTypeLabel;
     }
 
     public ControllerManager getControllerManager() {

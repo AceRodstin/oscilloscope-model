@@ -43,6 +43,7 @@ public class GraphController {
         setGraphTypes();
         listenGraphTypes();
         setFilterTypes();
+        setDecimalFormats();
     }
 
     private void setVerticalScales() {
@@ -169,6 +170,17 @@ public class GraphController {
 
         mainController.getFilterTypesComboBox().setItems(types);
         mainController.getFilterTypesComboBox().getSelectionModel().select(0);
+    }
+
+    private void setDecimalFormats() {
+        if (mainController.getDecimalFormatComboBox().getItems().isEmpty()) {
+            ObservableList<String> strings = FXCollections.observableArrayList();
+            for (int i = 1; i <= Utils.getDecimalScaleLimit(); i++) {
+                strings.add(String.format("%d", i));
+            }
+            mainController.getDecimalFormatComboBox().getItems().addAll(strings);
+            mainController.getDecimalFormatComboBox().getSelectionModel().select(1);
+        }
     }
 
     public void showSignal() {
