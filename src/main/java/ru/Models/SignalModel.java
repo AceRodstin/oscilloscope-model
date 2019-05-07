@@ -113,6 +113,8 @@ public class SignalModel {
             phase -= 5 * random.nextDouble();
             dc += 0.1 * random.nextDouble();
             dc -= 0.1 * random.nextDouble();
+        } else {
+            noiseCoefficient = 0;
         }
     }
 

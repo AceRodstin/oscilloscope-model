@@ -13,9 +13,11 @@ public class SignalParametersModel {
     private double maxSignalValue;
     private int minSamples = 20;
     private double minSignalValue;
+    private int periods;
     private double rms;
     private int samplesPerSemiPeriods;
     private double[] signal;
+    private int zeroTransitionCounter;
 
     public void calculateParameters(double[] signal) {
         this.signal = signal;
@@ -126,10 +128,10 @@ public class SignalParametersModel {
 
     private double calculateFrequency() {
         double estimatedFrequency = estimateFrequency();
-        double accuracyCoefficient = 5000;
+        double accuracyCoefficient = 500;
 
         if (estimatedFrequency < accuracyCoefficient) {
-            return defineFrequency(estimatedFrequency);
+            return defineFrequency();
         } else {
             return estimatedFrequency;
         }
@@ -142,16 +144,16 @@ public class SignalParametersModel {
         double filteringCoefficient = 1.05;
 
         for (int i = 0; i < signal.length; i++) {
-            if (amplitude + dc > 0) {
-                if (dc > 0) {
-                    if (signal[i] > dc * filteringCoefficient && !positivePartOfSignal) {
+            if (amplitude + dc >= 0) {
+                if (dc >= 0) {
+                    if (signal[i] >= dc * filteringCoefficient && !positivePartOfSignal) {
                         frequency++;
                         positivePartOfSignal = true;
                     } else if (signal[i] < dc / filteringCoefficient && positivePartOfSignal) {
                         positivePartOfSignal = false;
                     }
                 } else {
-                    if (signal[i] > dc / filteringCoefficient && !positivePartOfSignal) {
+                    if (signal[i] >= dc / filteringCoefficient && !positivePartOfSignal) {
                         frequency++;
                         positivePartOfSignal = true;
                     } else if (signal[i] < dc * filteringCoefficient && positivePartOfSignal) {
@@ -162,7 +164,7 @@ public class SignalParametersModel {
                 if (signal[i] < dc * filteringCoefficient && !positivePartOfSignal) {
                     frequency++;
                     positivePartOfSignal = true;
-                } else if (signal[i] > dc / filteringCoefficient && positivePartOfSignal) {
+                } else if (signal[i] >= dc / filteringCoefficient && positivePartOfSignal) {
                     positivePartOfSignal = false;
                 }
             }
@@ -171,59 +173,41 @@ public class SignalParametersModel {
         return frequency;
     }
 
-    private double defineFrequency(double estimatedFrequency) {
+    private double defineFrequency() {
         int shift = 1_000;
         double firstValue = signal[0] + shift;
         boolean firstPeriod = true;
-        double periods = 0;
         boolean positivePartOfSignal = !(firstValue > (dc + shift));
-        bufferedSamplesPerSemiPeriods = samplesPerSemiPeriods = 0;
-        int zeroTransitionCounter = 0;
+        bufferedSamplesPerSemiPeriods = periods = samplesPerSemiPeriods = zeroTransitionCounter = 0;
 
         for (int index = 0; index < signal.length; index++) {
             double value = signal[index] + shift;
             double centerOfSignal = dc + shift;
 
-            countSamples(zeroTransitionCounter);
+            countSamples();
 
             if (firstValue >= centerOfSignal) {
                 if (value >= centerOfSignal && firstPeriod && (index >= minSamples)) {
                     positivePartOfSignal = true;
                 } else if ((value < centerOfSignal && positivePartOfSignal)) {
-                    zeroTransitionCounter++;
-                    if (zeroTransitionCounter % 2 != 0 && zeroTransitionCounter > 2) {
-                        bufferedSamplesPerSemiPeriods = samplesPerSemiPeriods;
-                        periods++;
-                    }
+                    countPeriods();
                     positivePartOfSignal = false;
                     firstPeriod = false;
                 } else if (value >= centerOfSignal && !firstPeriod && !positivePartOfSignal && samplesPerSemiPeriods > minSamples) {
-                    zeroTransitionCounter++;
-                    if (zeroTransitionCounter % 2 != 0 && zeroTransitionCounter > 2) {
-                        bufferedSamplesPerSemiPeriods = samplesPerSemiPeriods;
-                        periods++;
-                    }
+                    countPeriods();
                     positivePartOfSignal = true;
                 }
             }
 
             if (firstValue < centerOfSignal) {
-                if (value < centerOfSignal && firstPeriod && (index > minSamples)) {
+                if (value < centerOfSignal && firstPeriod && (index >= minSamples)) {
                     positivePartOfSignal = false;
                 } else if ((value > centerOfSignal && !positivePartOfSignal)) {
-                    zeroTransitionCounter++;
-                    if (zeroTransitionCounter % 2 != 0 && zeroTransitionCounter > 2) {
-                        bufferedSamplesPerSemiPeriods = samplesPerSemiPeriods;
-                        periods++;
-                    }
+                    countPeriods();
                     positivePartOfSignal = true;
                     firstPeriod = false;
                 } else if (value < centerOfSignal && !firstPeriod && positivePartOfSignal && samplesPerSemiPeriods > minSamples) {
-                    zeroTransitionCounter++;
-                    if (zeroTransitionCounter % 2 != 0 && zeroTransitionCounter > 2) {
-                        bufferedSamplesPerSemiPeriods = samplesPerSemiPeriods;
-                        periods++;
-                    }
+                    countPeriods();
                     positivePartOfSignal = false;
                 }
             }
@@ -232,18 +216,20 @@ public class SignalParametersModel {
         double samplesPerPeriod = bufferedSamplesPerSemiPeriods == 0 ? 0 : bufferedSamplesPerSemiPeriods / periods;
         double signalFrequency = (samplesPerPeriod == 0 ? 0 : ((double) signal.length / samplesPerPeriod));
 
-        if (signalFrequency < 5) {
-            return signalFrequency;
-        } else if (signalFrequency < estimatedFrequency / 2.5 || signalFrequency > estimatedFrequency * 2.5) {
-            return estimatedFrequency;
-        } else {
-            return signalFrequency;
+        return signalFrequency;
+    }
+
+    private void countSamples() {
+        if (zeroTransitionCounter >= 1) {
+            samplesPerSemiPeriods++;
         }
     }
 
-    private void countSamples(int zeroTransitionCounter) {
-        if (zeroTransitionCounter >= 1) {
-            samplesPerSemiPeriods++;
+    private void countPeriods() {
+        zeroTransitionCounter++;
+        if (zeroTransitionCounter % 2 != 0 && zeroTransitionCounter > 2) {
+            bufferedSamplesPerSemiPeriods = samplesPerSemiPeriods;
+            periods++;
         }
     }
 
