@@ -1,7 +1,7 @@
 package ru.Controllers.Graph;
 
 public enum GraphTypes {
-    SIGNAL("Сигнал"), SPECTRUM("Спектр");
+    SIGNAL("Сигнал"), SPECTRUM("Спектр"), REGULATOR("Регулятор");
 
     private String typeName;
 

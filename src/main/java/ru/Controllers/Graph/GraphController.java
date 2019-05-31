@@ -107,6 +107,7 @@ public class GraphController {
 
         scaleValues.add(GraphTypes.SIGNAL.getTypeName());
         scaleValues.add(GraphTypes.SPECTRUM.getTypeName());
+        scaleValues.add(GraphTypes.REGULATOR.getTypeName());
 
         mainController.getGraphTypeComboBox().setItems(scaleValues);
         mainController.getGraphTypeComboBox().getSelectionModel().select(0);
@@ -125,6 +126,8 @@ public class GraphController {
                 setSpectrumTitles();
                 restartShowDataThread();
             }
+
+            mainController.getRegulatorController().toggleRegulator(selectedType.equals(GraphTypes.REGULATOR.getTypeName()));
         });
     }
 

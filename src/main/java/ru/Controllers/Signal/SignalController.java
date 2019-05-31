@@ -82,12 +82,6 @@ public class SignalController {
                 mainController.getPhaseTextField().getText().isEmpty();
     }
 
-    public void generateSignal() {
-        parseSignalParameters();
-        signalModel.setNoiseType(noiseType);
-        signalModel.generateSignal(signalType);
-    }
-
     public void parseSignalParameters() {
         signalModel.setAmplitude(Double.parseDouble(mainController.getAmplitudeTextField().getText()));
         signalModel.setDc(Double.parseDouble(mainController.getDcTextField().getText()));
@@ -98,12 +92,17 @@ public class SignalController {
         noiseType = mainController.getNoiseTypesComboBox().getSelectionModel().getSelectedItem();
     }
 
+    public void generateSignal() {
+        signalModel.setNoiseType(noiseType);
+        signalModel.generateSignal(signalType);
+    }
+
     public void showSignalParameters() {
         signalModel.calculateSignalParameters();
 
         int decimalFormatScale = getDecimalFormatScale();
-        double amplitude = Utils.roundValue(signalModel.getAmplitude(), decimalFormatScale);
-        double dc = Utils.roundValue(signalModel.getDc(), decimalFormatScale);
+        double amplitude = Utils.roundValue(signalModel.getReceivedAmplitude(), decimalFormatScale);
+        double dc = Utils.roundValue(signalModel.getReceivedDc(), decimalFormatScale);
         double frequency = Utils.roundValue(signalModel.getReceivedFrequency(), decimalFormatScale);
         double rms = Utils.roundValue(signalModel.getRms(), decimalFormatScale);
 

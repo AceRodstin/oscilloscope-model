@@ -5,6 +5,7 @@ import org.vitrivr.cineast.core.util.dsp.fft.FFT;
 import org.vitrivr.cineast.core.util.dsp.fft.windows.HanningWindow;
 import ru.Controllers.Signal.NoiseTypes;
 import ru.Controllers.Signal.SignalTypes;
+import ru.Utils.Utils;
 
 import java.util.*;
 
@@ -160,15 +161,27 @@ public class SignalModel {
     }
 
     public double getAmplitude() {
-        return signalParametersModel.getAmplitude();
+        return Utils.roundValue(amplitude, 100000);
     }
 
     public double getDc() {
-        return signalParametersModel.getDc();
+        return Utils.roundValue(dc, 100000);
     }
 
     public double getFrequency() {
-        return frequency;
+        return Utils.roundValue(frequency, 100000);
+    }
+
+    public double getPhase() {
+        return Utils.roundValue(phase, 100000);
+    }
+
+    public double getReceivedAmplitude() {
+        return signalParametersModel.getAmplitude();
+    }
+
+    public double getReceivedDc() {
+        return signalParametersModel.getDc();
     }
 
     public double getReceivedFrequency() {

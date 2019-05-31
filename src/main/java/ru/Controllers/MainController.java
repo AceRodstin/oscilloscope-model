@@ -6,6 +6,8 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.control.*;
 import org.controlsfx.control.StatusBar;
 import ru.Controllers.Graph.GraphController;
+import ru.Controllers.Graph.GraphTypes;
+import ru.Controllers.Regulator.RegulatorController;
 import ru.Controllers.Signal.SignalController;
 import ru.Utils.BaseController;
 import ru.Utils.ControllerManager;
@@ -73,9 +75,11 @@ public class MainController implements BaseController {
     @FXML
     private TextField receivedRMSTextField;
     @FXML
-    private ComboBox<String> signalTypeComboBox;
+    private Label signalSettingsLabel;
     @FXML
     private Label signalTypeLabel;
+    @FXML
+    private ComboBox<String> signalTypeComboBox;
     @FXML
     private StatusBar statusBar;
     @FXML
@@ -88,14 +92,17 @@ public class MainController implements BaseController {
     private int buttonPressedCounter;
     private ControllerManager controllerManager;
     private GraphController graphController = new GraphController(this);
+    private RegulatorController regulatorController = new RegulatorController();
     private Thread showSignal = new Thread();
     private SignalController signalController = new SignalController(this);
     private boolean signalParametersSet;
     private StatusBarLine statusBarLine = new StatusBarLine();
 
+    @FXML
     public void initialize() {
         graphController.initialize();
         signalController.initialize();
+        regulatorController.initialize(this);
     }
 
     public void handleGenerate() {
@@ -106,6 +113,16 @@ public class MainController implements BaseController {
     }
 
     private void checkSignalParameters() {
+        if (graphTypeComboBox.getSelectionModel().getSelectedItem().equals(GraphTypes.REGULATOR.getTypeName())) {
+            graphTypeComboBox.getSelectionModel().select(0); // отображать сигнал
+        } else {
+            signalController.parseSignalParameters();
+        }
+
+        checkEmptyFields();
+    }
+
+    private void checkEmptyFields() {
         signalParametersSet = !signalController.checkEmptyTextFields();
 
         if (!signalController.checkEmptyTextFields()) {
@@ -199,8 +216,20 @@ public class MainController implements BaseController {
         showSignal.start();
     }
 
+    public Label getAmplitudeLabel() {
+        return amplitudeLabel;
+    }
+
     public TextField getAmplitudeTextField() {
         return amplitudeTextField;
+    }
+
+    public ControllerManager getControllerManager() {
+        return controllerManager;
+    }
+
+    public Label getDcLabel() {
+        return dcLabel;
     }
 
     public TextField getDcTextField() {
@@ -211,16 +240,44 @@ public class MainController implements BaseController {
         return decimalFormatComboBox;
     }
 
+    public ComboBox<String> getFilterTypesComboBox() {
+        return filterTypesComboBox;
+    }
+
     public Label getDecimalFormatLabel() {
         return decimalFormatLabel;
+    }
+
+    public Label getFrequencyLabel() {
+        return frequencyLabel;
     }
 
     public TextField getFrequencyTextField() {
         return frequencyTextField;
     }
 
+    public LineChart<Number, Number> getGraph() {
+        return graph;
+    }
+
+    public ComboBox<String> getGraphTypeComboBox() {
+        return graphTypeComboBox;
+    }
+
+    public ComboBox<String> getHorizontalScalesComboBox() {
+        return horizontalScalesComboBox;
+    }
+
+    public Label getNoiseLabel() {
+        return noiseLabel;
+    }
+
     public ComboBox<String> getNoiseTypesComboBox() {
         return noiseTypesComboBox;
+    }
+
+    public Label getPhaseLabel() {
+        return phaseLabel;
     }
 
     public TextField getPhaseTextField() {
@@ -243,28 +300,8 @@ public class MainController implements BaseController {
         return receivedRMSTextField;
     }
 
-    public ComboBox<String> getSignalTypeComboBox() {
-        return signalTypeComboBox;
-    }
-
-    public ControllerManager getControllerManager() {
-        return controllerManager;
-    }
-
-    public ComboBox<String> getFilterTypesComboBox() {
-        return filterTypesComboBox;
-    }
-
-    public LineChart<Number, Number> getGraph() {
-        return graph;
-    }
-
-    public ComboBox<String> getGraphTypeComboBox() {
-        return graphTypeComboBox;
-    }
-
-    public ComboBox<String> getHorizontalScalesComboBox() {
-        return horizontalScalesComboBox;
+    public RegulatorController getRegulatorController() {
+        return regulatorController;
     }
 
     public Thread getShowSignalThread() {
@@ -273,6 +310,18 @@ public class MainController implements BaseController {
 
     public SignalController getSignalController() {
         return signalController;
+    }
+
+    public Label getSignalSettingsLabel() {
+        return signalSettingsLabel;
+    }
+
+    public Label getSignalTypeLabel() {
+        return signalTypeLabel;
+    }
+
+    public ComboBox<String> getSignalTypeComboBox() {
+        return signalTypeComboBox;
     }
 
     public ComboBox<String> getVerticalScalesComboBox() {

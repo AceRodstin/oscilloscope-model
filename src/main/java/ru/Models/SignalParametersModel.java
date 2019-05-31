@@ -11,7 +11,6 @@ public class SignalParametersModel {
     private int bufferedSamplesPerSemiPeriods;
     private double frequency;
     private double maxSignalValue;
-    private int minSamples = 20;
     private double minSignalValue;
     private int periods;
     private double rms;
@@ -29,13 +28,13 @@ public class SignalParametersModel {
         double min = Double.MAX_VALUE;
         double max = Double.MIN_VALUE;
 
-        for (int i = 0; i < signal.length; i++) {
-            if (signal[i] > max) {
-                max = signal[i];
+        for (double value : signal) {
+            if (value > max) {
+                max = value;
             }
 
-            if (signal[i] < min) {
-                min = signal[i];
+            if (value < min) {
+                min = value;
             }
         }
 
@@ -120,8 +119,8 @@ public class SignalParametersModel {
 
     private double calculateRms() {
         double summ = 0;
-        for (int i = 0; i < signal.length; i++) {
-            summ += (signal[i] - dc) * (signal[i] - dc);
+        for (double value : signal) {
+            summ += (value - dc) * (value - dc);
         }
         return Math.sqrt(summ / signal.length);
     }
@@ -143,28 +142,28 @@ public class SignalParametersModel {
         double frequency = 0;
         double filteringCoefficient = 1.05;
 
-        for (int i = 0; i < signal.length; i++) {
+        for (double value : signal) {
             if (amplitude + dc >= 0) {
                 if (dc >= 0) {
-                    if (signal[i] >= dc * filteringCoefficient && !positivePartOfSignal) {
+                    if (value >= dc * filteringCoefficient && !positivePartOfSignal) {
                         frequency++;
                         positivePartOfSignal = true;
-                    } else if (signal[i] < dc / filteringCoefficient && positivePartOfSignal) {
+                    } else if (value < dc / filteringCoefficient && positivePartOfSignal) {
                         positivePartOfSignal = false;
                     }
                 } else {
-                    if (signal[i] >= dc / filteringCoefficient && !positivePartOfSignal) {
+                    if (value >= dc / filteringCoefficient && !positivePartOfSignal) {
                         frequency++;
                         positivePartOfSignal = true;
-                    } else if (signal[i] < dc * filteringCoefficient && positivePartOfSignal) {
+                    } else if (value < dc * filteringCoefficient && positivePartOfSignal) {
                         positivePartOfSignal = false;
                     }
                 }
             } else if (amplitude + dc < 0 && dc < 0) {
-                if (signal[i] < dc * filteringCoefficient && !positivePartOfSignal) {
+                if (value < dc * filteringCoefficient && !positivePartOfSignal) {
                     frequency++;
                     positivePartOfSignal = true;
-                } else if (signal[i] >= dc / filteringCoefficient && positivePartOfSignal) {
+                } else if (value >= dc / filteringCoefficient && positivePartOfSignal) {
                     positivePartOfSignal = false;
                 }
             }
@@ -186,6 +185,7 @@ public class SignalParametersModel {
 
             countSamples();
 
+            int minSamples = 20;
             if (firstValue >= centerOfSignal) {
                 if (value >= centerOfSignal && firstPeriod && (index >= minSamples)) {
                     positivePartOfSignal = true;
@@ -213,10 +213,9 @@ public class SignalParametersModel {
             }
         }
 
-        double samplesPerPeriod = bufferedSamplesPerSemiPeriods == 0 ? 0 : bufferedSamplesPerSemiPeriods / periods;
-        double signalFrequency = (samplesPerPeriod == 0 ? 0 : ((double) signal.length / samplesPerPeriod));
+        double samplesPerPeriod = bufferedSamplesPerSemiPeriods == 0 ? 0 : (double) bufferedSamplesPerSemiPeriods / periods;
 
-        return signalFrequency;
+        return (samplesPerPeriod == 0 ? 0 : ((double) signal.length / samplesPerPeriod));
     }
 
     private void countSamples() {

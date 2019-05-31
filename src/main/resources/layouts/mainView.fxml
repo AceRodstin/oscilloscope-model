@@ -84,11 +84,11 @@
             <ComboBox fx:id="verticalScalesComboBox" disable="true" prefWidth="150.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="9" />
             <Label fx:id="horizontalScalesLabel" disable="true" text="Горизонт. масштаб:" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="8" />
             <ComboBox fx:id="horizontalScalesComboBox" disable="true" prefWidth="150.0" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="9" />
-            <Label fx:id="graphTypeLabel" disable="true" text="Отображать:" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.rowIndex="8" />
-            <ComboBox fx:id="graphTypeComboBox" disable="true" prefWidth="150.0" GridPane.columnIndex="5" GridPane.rowIndex="9" />
-            <Label fx:id="filterTypesLabel" disable="true" text="Цифровой фильтр:" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="11" />
-            <ComboBox fx:id="filterTypesComboBox" disable="true" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="12" />
-            <Label styleClass="chart-title" text="Настройки генерируемого сигнала:" GridPane.columnIndex="8" GridPane.columnSpan="7" GridPane.halignment="CENTER" GridPane.rowIndex="7">
+            <Label fx:id="graphTypeLabel" disable="true" text="Отображать:" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="11" />
+            <ComboBox fx:id="graphTypeComboBox" disable="true" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="12" />
+            <Label fx:id="filterTypesLabel" disable="true" text="Цифровой фильтр:" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="11" />
+            <ComboBox fx:id="filterTypesComboBox" disable="true" prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="12" />
+            <Label fx:id="signalSettingsLabel" styleClass="chart-title" text="Настройки генерируемого сигнала:" GridPane.columnIndex="8" GridPane.columnSpan="7" GridPane.halignment="CENTER" GridPane.rowIndex="7">
                <font>
                   <Font name="Arial Bold" size="16.0" />
                </font>
@@ -116,8 +116,8 @@
             <Label fx:id="warningIcon" alignment="CENTER" contentDisplay="CENTER" style="-fx-font-size: 22px; -fx-opacity: 0;" text="⚠︎" GridPane.rowIndex="15" />
             <Label fx:id="checkIcon" style="-fx-font-size: 26px; -fx-opacity: 0;" text="✔" GridPane.rowIndex="15" />
             <TextField fx:id="receivedRMSTextField" disable="true" GridPane.columnIndex="11" GridPane.rowIndex="5" />
-            <Label fx:id="decimalFormatLabel" disable="true" text="Десятичн. знаков:" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="11" />
-            <ComboBox fx:id="decimalFormatComboBox" disable="true" prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="12" />
+            <Label fx:id="decimalFormatLabel" disable="true" text="Десятичн. знаков:" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.rowIndex="8" />
+            <ComboBox fx:id="decimalFormatComboBox" disable="true" prefWidth="150.0" GridPane.columnIndex="5" GridPane.rowIndex="9" />
          </children>
       </GridPane>
    </children>
