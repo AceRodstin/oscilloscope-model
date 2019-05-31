@@ -44,6 +44,7 @@ public class GraphController {
         listenGraphTypes();
         setFilterTypes();
         setDecimalFormats();
+        listenDecimalFormats();
     }
 
     private void setVerticalScales() {
@@ -186,6 +187,12 @@ public class GraphController {
         }
     }
 
+    private void listenDecimalFormats() {
+        mainController.getDecimalFormatComboBox().valueProperty().addListener(observable -> {
+            restartShowDataThread();
+        });
+    }
+
     public void showSignal() {
         String graphType = mainController.getGraphTypeComboBox().getSelectionModel().getSelectedItem();
         boolean isFFT = graphType.equals(GraphTypes.SPECTRUM.getTypeName());
@@ -253,6 +260,4 @@ public class GraphController {
         });
         Utils.sleep(50);
     }
-
-
 }

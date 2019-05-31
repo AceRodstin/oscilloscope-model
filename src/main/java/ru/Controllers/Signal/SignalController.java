@@ -1,5 +1,6 @@
 package ru.Controllers.Signal;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TextField;
@@ -106,10 +107,13 @@ public class SignalController {
         double frequency = Utils.roundValue(signalModel.getReceivedFrequency(), decimalFormatScale);
         double rms = Utils.roundValue(signalModel.getRms(), decimalFormatScale);
 
-        mainController.getReceivedAmplitudeTextField().setText(Utils.convertFromExponentialFormat(amplitude, decimalFormatScale));
-        mainController.getReceivedDCTextField().setText(Utils.convertFromExponentialFormat(dc, decimalFormatScale));
-        mainController.getReceivedFrequencyTextField().setText(Utils.convertFromExponentialFormat(frequency, decimalFormatScale));
-        mainController.getReceivedRMSTextField().setText(Utils.convertFromExponentialFormat(rms, decimalFormatScale));
+        Platform.runLater(() -> {
+            mainController.getReceivedAmplitudeTextField().setText(Utils.convertFromExponentialFormat(amplitude, decimalFormatScale));
+            mainController.getReceivedDCTextField().setText(Utils.convertFromExponentialFormat(dc, decimalFormatScale));
+            mainController.getReceivedFrequencyTextField().setText(Utils.convertFromExponentialFormat(frequency, decimalFormatScale));
+            mainController.getReceivedRMSTextField().setText(Utils.convertFromExponentialFormat(rms, decimalFormatScale));
+        });
+
     }
 
     public int getDecimalFormatScale() {
