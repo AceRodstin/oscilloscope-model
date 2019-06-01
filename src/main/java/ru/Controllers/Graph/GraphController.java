@@ -44,6 +44,7 @@ public class GraphController {
         listenGraphTypes();
         setFilterTypes();
         setDecimalFormats();
+        listenDecimalFormats();
     }
 
     private void setVerticalScales() {
@@ -125,6 +126,10 @@ public class GraphController {
                 setHorizontalSpectrumScales();
                 setSpectrumTitles();
                 restartShowDataThread();
+            } else {
+                setHorizontalSignalScales();
+                setSignalTitles();
+                restartShowDataThread();
             }
 
             mainController.getRegulatorController().toggleRegulator(selectedType.equals(GraphTypes.REGULATOR.getTypeName()));
@@ -186,6 +191,12 @@ public class GraphController {
         }
     }
 
+    private void listenDecimalFormats() {
+        mainController.getDecimalFormatComboBox().valueProperty().addListener(observable -> {
+            restartShowDataThread();
+        });
+    }
+
     public void showSignal() {
         String graphType = mainController.getGraphTypeComboBox().getSelectionModel().getSelectedItem();
         boolean isFFT = graphType.equals(GraphTypes.SPECTRUM.getTypeName());
@@ -200,14 +211,13 @@ public class GraphController {
             graphSeries.getData().add(new XYChart.Data<>(0, 0));
         }
 
-        int rarefactionCoefficient = mainController.getSignalController().getSignalModel().getRarefactionCoefficient();
-        for (int index = 0; index < intermediateList.size(); index += rarefactionCoefficient) {
+        for (XYChart.Data<Number, Number> numberNumberData : intermediateList) {
             if (mainController.getControllerManager().isFinished()) {
                 Platform.runLater(() -> graphSeries.getData().clear());
                 break;
             }
 
-            XYChart.Data<Number, Number> point = intermediateList.get(index);
+            XYChart.Data<Number, Number> point = numberNumberData;
             Runnable addPoint = () -> {
                 if (!graphSeries.getData().contains(point)) {
                     graphSeries.getData().add(point);
@@ -215,7 +225,6 @@ public class GraphController {
             };
 
             if (isFFT) {
-                rarefactionCoefficient = 1;
                 XYChart.Data<Number, Number> previousPoint = new XYChart.Data<>((double) point.getXValue() / 1.001, 0);
                 XYChart.Data<Number, Number> nextPoint = new XYChart.Data<>((double) point.getXValue() * 1.001, 0);
 
@@ -233,14 +242,9 @@ public class GraphController {
                 Utils.sleep(1);
             }
 
-            if (index == intermediateList.size() - rarefactionCoefficient) {
-                XYChart.Data<Number, Number> lastPoint = new XYChart.Data<>(graphModel.getUpperBound(),
-                        intermediateList.get(index).getYValue());
-                Platform.runLater(() -> graphSeries.getData().add(lastPoint));
-                Utils.sleep(1000);
-            } else if ((double) point.getXValue() >= graphModel.getUpperBound()) {
+            if ((double) point.getXValue() >= graphModel.getUpperBound()) {
                 Platform.runLater(addPoint);
-                Utils.sleep(1000);
+                Utils.sleep(500);
                 break;
             }
         }
@@ -253,6 +257,4 @@ public class GraphController {
         });
         Utils.sleep(50);
     }
-
-
 }
