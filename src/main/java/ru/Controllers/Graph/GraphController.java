@@ -126,9 +126,12 @@ public class GraphController {
                 setHorizontalSpectrumScales();
                 setSpectrumTitles();
                 restartShowDataThread();
+            } else {
+                mainController.getRegulatorController().toggleRegulator(selectedType.equals(GraphTypes.REGULATOR.getTypeName()));
+                setHorizontalSignalScales();
+                setSignalTitles();
+                restartShowDataThread();
             }
-
-            mainController.getRegulatorController().toggleRegulator(selectedType.equals(GraphTypes.REGULATOR.getTypeName()));
         });
     }
 

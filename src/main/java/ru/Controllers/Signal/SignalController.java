@@ -8,8 +8,6 @@ import ru.Controllers.MainController;
 import ru.Models.SignalModel;
 import ru.Utils.Utils;
 
-import javax.rmi.CORBA.Util;
-
 public class SignalController {
     private MainController mainController;
     private String noiseType;
@@ -60,8 +58,10 @@ public class SignalController {
         types.add(SignalTypes.SAW.getTypeName());
         types.add(SignalTypes.NOISE.getTypeName());
 
-        mainController.getSignalTypeComboBox().setItems(types);
-        mainController.getSignalTypeComboBox().getSelectionModel().select(0);
+        Platform.runLater(() -> {
+            mainController.getSignalTypeComboBox().setItems(types);
+            mainController.getSignalTypeComboBox().getSelectionModel().select(0);
+        });
     }
 
     private void setNoiseTypes() {
@@ -107,13 +107,17 @@ public class SignalController {
         double frequency = Utils.roundValue(signalModel.getReceivedFrequency(), decimalFormatScale);
         double rms = Utils.roundValue(signalModel.getRms(), decimalFormatScale);
 
+        mainController.getRegulatorController().getRegulatorModel().setResponseAmplitude(amplitude);
+        mainController.getRegulatorController().getRegulatorModel().setResponseDc(dc);
+        mainController.getRegulatorController().getRegulatorModel().setResponseFrequency(frequency);
+        mainController.getRegulatorController().getRegulatorModel().setResponseRms(rms);
+
         Platform.runLater(() -> {
             mainController.getReceivedAmplitudeTextField().setText(Utils.convertFromExponentialFormat(amplitude, decimalFormatScale));
             mainController.getReceivedDCTextField().setText(Utils.convertFromExponentialFormat(dc, decimalFormatScale));
             mainController.getReceivedFrequencyTextField().setText(Utils.convertFromExponentialFormat(frequency, decimalFormatScale));
-            mainController.getReceivedRMSTextField().setText(Utils.convertFromExponentialFormat(rms, decimalFormatScale));
+            mainController.getReceivedRmsTextField().setText(Utils.convertFromExponentialFormat(rms, decimalFormatScale));
         });
-
     }
 
     public int getDecimalFormatScale() {
@@ -122,5 +126,9 @@ public class SignalController {
 
     public SignalModel getSignalModel() {
         return signalModel;
+    }
+
+    public String getSignalType() {
+        return signalType;
     }
 }

@@ -139,6 +139,9 @@ public class MainController implements BaseController {
             Platform.runLater(() -> statusBarLine.setStatus("Генерация сигнала", statusBar));
         } else if (buttonPressedCounter % 2 == 0 && signalParametersSet) {
             toggleProgressIndicatorState(true);
+            toggleUiElementsState(false);
+            graphController.clearGraph();
+
             statusBarLine.setStatusOk(true);
             Platform.runLater(() -> statusBarLine.setStatus("Генерация сигнала остановлена", statusBar,
                     checkIcon, warningIcon));
@@ -167,38 +170,40 @@ public class MainController implements BaseController {
     }
 
     private void toggleUiElementsState(boolean isDisable) {
-        verticalScalesLabel.setDisable(!isDisable);
-        verticalScalesComboBox.setDisable(!isDisable);
-        horizontalScalesLabel.setDisable(!isDisable);
-        horizontalScalesComboBox.setDisable(!isDisable);
-        graphTypeLabel.setDisable(!isDisable);
-        graphTypeComboBox.setDisable(!isDisable);
-        filterTypesLabel.setDisable(!isDisable);
-        filterTypesComboBox.setDisable(!isDisable);
-        decimalFormatComboBox.setDisable(!isDisable);
-        decimalFormatLabel.setDisable(!isDisable);
+        Platform.runLater(() -> {
+            verticalScalesLabel.setDisable(!isDisable);
+            verticalScalesComboBox.setDisable(!isDisable);
+            horizontalScalesLabel.setDisable(!isDisable);
+            horizontalScalesComboBox.setDisable(!isDisable);
+            graphTypeLabel.setDisable(!isDisable);
+            graphTypeComboBox.setDisable(!isDisable);
+            filterTypesLabel.setDisable(!isDisable);
+            filterTypesComboBox.setDisable(!isDisable);
+            decimalFormatComboBox.setDisable(!isDisable);
+            decimalFormatLabel.setDisable(!isDisable);
 
-        amplitudeLabel.setDisable(isDisable);
-        amplitudeTextField.setDisable(isDisable);
-        dcLabel.setDisable(isDisable);
-        dcTextField.setDisable(isDisable);
-        frequencyLabel.setDisable(isDisable);
-        frequencyTextField.setDisable(isDisable);
-        noiseLabel.setDisable(isDisable);
-        noiseTypesComboBox.setDisable(isDisable);
-        phaseLabel.setDisable(isDisable);
-        phaseTextField.setDisable(isDisable);
-        signalTypeComboBox.setDisable(isDisable);
-        signalTypeLabel.setDisable(isDisable);
+            amplitudeLabel.setDisable(isDisable);
+            amplitudeTextField.setDisable(isDisable);
+            dcLabel.setDisable(isDisable);
+            dcTextField.setDisable(isDisable);
+            frequencyLabel.setDisable(isDisable);
+            frequencyTextField.setDisable(isDisable);
+            noiseLabel.setDisable(isDisable);
+            noiseTypesComboBox.setDisable(isDisable);
+            phaseLabel.setDisable(isDisable);
+            phaseTextField.setDisable(isDisable);
+            signalTypeComboBox.setDisable(isDisable);
+            signalTypeLabel.setDisable(isDisable);
 
-        receivedAmplitudeLabel.setDisable(!isDisable);
-        receivedAmplitudeTextField.setDisable(!isDisable);
-        receivedDCLabel.setDisable(!isDisable);
-        receivedDCTextField.setDisable(!isDisable);
-        receivedFrequencyLabel.setDisable(!isDisable);
-        receivedFrequencyTextField.setDisable(!isDisable);
-        receivedRMSLabel.setDisable(!isDisable);
-        receivedRMSTextField.setDisable(!isDisable);
+            receivedAmplitudeLabel.setDisable(!isDisable);
+            receivedAmplitudeTextField.setDisable(!isDisable);
+            receivedDCLabel.setDisable(!isDisable);
+            receivedDCTextField.setDisable(!isDisable);
+            receivedFrequencyLabel.setDisable(!isDisable);
+            receivedFrequencyTextField.setDisable(!isDisable);
+            receivedRMSLabel.setDisable(!isDisable);
+            receivedRMSTextField.setDisable(!isDisable);
+        });
     }
 
     public void show() {
@@ -296,7 +301,7 @@ public class MainController implements BaseController {
         return receivedFrequencyTextField;
     }
 
-    public TextField getReceivedRMSTextField() {
+    public TextField getReceivedRmsTextField() {
         return receivedRMSTextField;
     }
 
