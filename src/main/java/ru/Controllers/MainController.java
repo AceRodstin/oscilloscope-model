@@ -140,7 +140,7 @@ public class MainController implements BaseController {
         } else if (buttonPressedCounter % 2 == 0 && signalParametersSet) {
             toggleProgressIndicatorState(true);
             toggleUiElementsState(false);
-            graphController.clearGraph();
+            Platform.runLater(() -> signalController.getSignalModel().getIntermediateList().clear());
 
             statusBarLine.setStatusOk(true);
             Platform.runLater(() -> statusBarLine.setStatus("Генерация сигнала остановлена", statusBar,

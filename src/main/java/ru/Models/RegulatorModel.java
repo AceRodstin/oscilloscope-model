@@ -5,6 +5,7 @@ import ru.Controllers.Regulator.NeededParameters;
 public class RegulatorModel {
     private double bufferedError;
     private double bufferedIValue;
+    private int calculationCount = 1;
     private double dCoefficient;
     private double dValue;
     private double error;
@@ -46,6 +47,35 @@ public class RegulatorModel {
         }
     }
 
+    public double getNewValueOfParameter() {
+        if (selectedParameter.equals(NeededParameters.AMPLITUDE.getParameterName())) {
+            return calculateRegulator(neededAmplitude, responseAmplitude);
+        } else if (selectedParameter.equals(NeededParameters.DC.getParameterName())) {
+            return calculateRegulator(neededDc, responseDc);
+        } else if (selectedParameter.equals(NeededParameters.FREQUENCY.getParameterName())) {
+            return calculateRegulator(neededFrequency, responseFrequency);
+        } else {
+            return 0;
+        }
+    }
+
+    private double calculateRegulator(double neededParameter, double response) {
+        double error = neededParameter - response;
+        pValue = pCoefficient * error;
+        iValue = iCoefficient * error;
+
+        if (calculationCount % 2 != 0) {
+            bufferedError = error;
+            bufferedIValue = iValue;
+        } else {
+            iValue = bufferedIValue + iCoefficient * error;
+            dValue = dCoefficient * (error - bufferedError);
+            calculationCount = 1;
+        }
+
+        return neededParameter + pValue + iValue + dValue;
+    }
+
     public String getSelectedParameter() {
         return selectedParameter;
     }
@@ -63,14 +93,16 @@ public class RegulatorModel {
     }
 
     public void setNeededParameter(double value) {
-        if (selectedParameter.equals(NeededParameters.AMPLITUDE.getParameterName())) {
-            neededAmplitude = value;
-        } else if (selectedParameter.equals(NeededParameters.DC.getParameterName())) {
-            neededDc = value;
-        } else if (selectedParameter.equals(NeededParameters.FREQUENCY.getParameterName())) {
-            neededFrequency = value;
-        } else {
-            neededRms = value;
+        if (selectedParameter != null) {
+            if (selectedParameter.equals(NeededParameters.AMPLITUDE.getParameterName())) {
+                neededAmplitude = value;
+            } else if (selectedParameter.equals(NeededParameters.DC.getParameterName())) {
+                neededDc = value;
+            } else if (selectedParameter.equals(NeededParameters.FREQUENCY.getParameterName())) {
+                neededFrequency = value;
+            } else {
+                neededRms = value;
+            }
         }
     }
 

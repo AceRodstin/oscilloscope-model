@@ -27,7 +27,7 @@ public class SignalModel {
 
     public void generateSignal(String signalType) {
         defineSamplesRate();
-        signal = new double[samples];
+        signal = new double[samples + 1];
 
         if (signalType.equals(SignalTypes.SINE.getTypeName())) {
             generateSin();
@@ -44,22 +44,22 @@ public class SignalModel {
 
     private void defineSamplesRate() {
         if (frequency <= 10) {
-            samples = 3000;
+            samples = 500;
         } else if (frequency > 10 && frequency <= 50) {
-            samples = 5000;
+            samples = 1500;
         } else if (frequency > 50 && frequency <= 100) {
-            samples = 7000;
+            samples = 3000;
         } else if (frequency > 100 && frequency <= 200) {
-            samples = 10000;
+            samples = 6000;
         } else if (frequency > 200 && frequency <= 500) {
-            samples = 25000;
+            samples = 8000;
         } else if (frequency > 500) {
-            samples = 35000;
+            samples = 10000;
         }
     }
 
     private void generateSin() {
-        for (int i = 0; i < samples; i++) {
+        for (int i = 0; i < samples + 1; i++) {
             setNoise();
             double channelPhase = Math.toRadians(phase);
             signal[i] = dc + (amplitude + noiseCoefficient) * Math.sin(2 * Math.PI * frequency * i / samples + channelPhase);
@@ -132,20 +132,6 @@ public class SignalModel {
                 intermediateList.add(new XYChart.Data<>((double) i / samples, signal[i]));
             }
         }
-    }
-
-    public int getRarefactionCoefficient() {
-        int rarefactionCoefficient;
-
-        if (frequency < 10) {
-            rarefactionCoefficient = 10;
-        } else if (frequency < 50) {
-            rarefactionCoefficient = 2;
-        } else {
-            rarefactionCoefficient = 1;
-        }
-
-        return rarefactionCoefficient;
     }
 
     public void calculateSignalParameters() {

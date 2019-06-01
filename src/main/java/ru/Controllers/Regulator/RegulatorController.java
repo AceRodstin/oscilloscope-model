@@ -72,6 +72,8 @@ public class RegulatorController {
                 phaseLabel.setText("Д - коэффициент:");
                 phaseTextField.setText(String.valueOf(regulatorModel.getdCoefficient()));
             });
+
+            setNewValueOfParameter();
         } else {
             Platform.runLater(() -> {
                 signalSettingsLabel.setText("Настройки генерируемого сигнала:");
@@ -99,35 +101,48 @@ public class RegulatorController {
     private void listenTextFields() {
         if (regulatorEnabled) {
             amplitudeTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-                if (regulatorEnabled) {
+                if (regulatorEnabled && !amplitudeTextField.getText().isEmpty() && !newValue.equals("-")) {
                     regulatorModel.setpCoefficient(Double.parseDouble(newValue));
                 }
             });
 
             frequencyTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-                if (regulatorEnabled) {
+                if (regulatorEnabled && !frequencyTextField.getText().isEmpty() && !newValue.equals("-")) {
                     regulatorModel.setiCoefficient(Double.parseDouble(newValue));
                 }
             });
 
             phaseTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-                if (regulatorEnabled) {
+                if (regulatorEnabled && !phaseTextField.getText().isEmpty() && !newValue.equals("-")) {
                     regulatorModel.setdCoefficient(Double.parseDouble(newValue));
                 }
             });
 
             dcTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-                if (regulatorEnabled) {
+                if (regulatorEnabled  && !dcTextField.getText().isEmpty() && !newValue.equals("-")) {
                     regulatorModel.setNeededParameter(Double.parseDouble(newValue));
                 }
             });
         }
     }
 
+    private double parseValueOfNeededParameter() {
+        double neededParameter = 0;
+
+        if (!dcTextField.getText().isEmpty() && !dcTextField.getText().equals("-")) {
+            neededParameter = Double.parseDouble(dcTextField.getText());
+        }
+
+        return neededParameter;
+    }
+
     private void listenNeededParameterComboBox() {
         signalTypeComboBox.valueProperty().addListener(observable -> {
             if (regulatorEnabled) {
                 regulatorModel.setSelectedParameter(signalTypeComboBox.getSelectionModel().getSelectedItem());
+                double neededValueOfParameter = parseValueOfNeededParameter();
+
+                regulatorModel.setNeededParameter(neededValueOfParameter);
             }
         });
     }
@@ -169,7 +184,6 @@ public class RegulatorController {
         parameters.add(NeededParameters.AMPLITUDE.getParameterName());
         parameters.add(NeededParameters.DC.getParameterName());
         parameters.add(NeededParameters.FREQUENCY.getParameterName());
-        parameters.add(NeededParameters.RMS.getParameterName());
 
         signalTypeComboBox.setItems(parameters);
     }
@@ -186,6 +200,24 @@ public class RegulatorController {
         mainController.getSignalTypeComboBox().setItems(types);
     }
 
+    private void setNewValueOfParameter() {
+        new Thread(() -> {
+            while (regulatorEnabled && !mainController.getControllerManager().isFinished()) {
+                double newValue = regulatorModel.getNewValueOfParameter();
+                String selectedParameter = regulatorModel.getSelectedParameter();
+
+                if (selectedParameter.equals(NeededParameters.AMPLITUDE.getParameterName())) {
+                    mainController.getSignalController().getSignalModel().setAmplitude(newValue);
+                } else if (selectedParameter.equals(NeededParameters.DC.getParameterName())) {
+                    mainController.getSignalController().getSignalModel().setDc(newValue);
+                } else if (selectedParameter.equals(NeededParameters.FREQUENCY.getParameterName())) {
+                    mainController.getSignalController().getSignalModel().setFrequency(newValue);
+                }
+
+                Utils.sleep(1000);
+            }
+        }).start();
+    }
 
     public RegulatorModel getRegulatorModel() {
         return regulatorModel;

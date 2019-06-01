@@ -1,7 +1,7 @@
 package ru.Controllers.Regulator;
 
 public enum NeededParameters {
-    AMPLITUDE("Амплитуде"), DC("Статике"), FREQUENCY("Частоте"), RMS("RMS");
+    AMPLITUDE("Амплитуде"), DC("Статике"), FREQUENCY("Частоте");
 
     private String parameterName;
 
