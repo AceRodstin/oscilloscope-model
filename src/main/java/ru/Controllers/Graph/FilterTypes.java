@@ -1,7 +1,7 @@
 package ru.Controllers.Graph;
 
 public enum FilterTypes {
-    NONE("Нет");
+    NONE("Нет"), IIR("БИХ");
 
     private String typeName;
 

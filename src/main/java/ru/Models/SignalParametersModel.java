@@ -134,7 +134,6 @@ public class SignalParametersModel {
         } else {
             return estimatedFrequency;
         }
-
     }
 
     private double estimateFrequency() {
@@ -185,35 +184,35 @@ public class SignalParametersModel {
 
             countSamples();
 
-            int minSamples = 20;
+            double minAmplitude = 0.5;
             if (firstValue >= centerOfSignal) {
-                if (value >= centerOfSignal && firstPeriod && (index >= minSamples)) {
+                if (value >= centerOfSignal && firstPeriod && (value >= minAmplitude)) {
                     positivePartOfSignal = true;
                 } else if ((value < centerOfSignal && positivePartOfSignal)) {
                     countPeriods();
                     positivePartOfSignal = false;
                     firstPeriod = false;
-                } else if (value >= centerOfSignal && !firstPeriod && !positivePartOfSignal && samplesPerSemiPeriods > minSamples) {
+                } else if (value >= centerOfSignal && !firstPeriod && !positivePartOfSignal) {
                     countPeriods();
                     positivePartOfSignal = true;
                 }
             }
 
             if (firstValue < centerOfSignal) {
-                if (value < centerOfSignal && firstPeriod && (index >= minSamples)) {
+                if (value <= centerOfSignal && firstPeriod && (value >= minAmplitude)) {
                     positivePartOfSignal = false;
                 } else if ((value > centerOfSignal && !positivePartOfSignal)) {
                     countPeriods();
                     positivePartOfSignal = true;
                     firstPeriod = false;
-                } else if (value < centerOfSignal && !firstPeriod && positivePartOfSignal && samplesPerSemiPeriods > minSamples) {
+                } else if (value <= centerOfSignal && !firstPeriod && positivePartOfSignal) {
                     countPeriods();
                     positivePartOfSignal = false;
                 }
             }
         }
 
-        double samplesPerPeriod = bufferedSamplesPerSemiPeriods == 0 ? 0 : (double) bufferedSamplesPerSemiPeriods / periods;
+        double samplesPerPeriod = bufferedSamplesPerSemiPeriods == 0 ? 0 : (double) (bufferedSamplesPerSemiPeriods - 1) / periods;
 
         return (samplesPerPeriod == 0 ? 0 : ((double) signal.length / samplesPerPeriod));
     }

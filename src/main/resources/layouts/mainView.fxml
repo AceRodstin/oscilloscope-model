@@ -118,6 +118,8 @@
             <TextField fx:id="receivedRMSTextField" disable="true" GridPane.columnIndex="11" GridPane.rowIndex="5" />
             <Label fx:id="decimalFormatLabel" disable="true" text="Десятичн. знаков:" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.rowIndex="8" />
             <ComboBox fx:id="decimalFormatComboBox" disable="true" prefWidth="150.0" GridPane.columnIndex="5" GridPane.rowIndex="9" />
+            <Label fx:id="filterLabel" text="Частота среза:" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.rowIndex="11" />
+            <TextField fx:id="filterTextField" GridPane.columnIndex="5" GridPane.rowIndex="12" />
          </children>
       </GridPane>
    </children>

@@ -12,6 +12,7 @@ import ru.Controllers.Signal.SignalController;
 import ru.Utils.BaseController;
 import ru.Utils.ControllerManager;
 import ru.Utils.StatusBarLine;
+import ru.Utils.Utils;
 
 public class MainController implements BaseController {
     @FXML
@@ -28,6 +29,10 @@ public class MainController implements BaseController {
     private ComboBox<String> decimalFormatComboBox;
     @FXML
     private Label decimalFormatLabel;
+    @FXML
+    private Label filterLabel;
+    @FXML
+    private TextField filterTextField;
     @FXML
     private ComboBox<String> filterTypesComboBox;
     @FXML
@@ -96,30 +101,21 @@ public class MainController implements BaseController {
     private Thread showSignal = new Thread();
     private SignalController signalController = new SignalController(this);
     private boolean signalParametersSet;
-    private StatusBarLine statusBarLine = new StatusBarLine();
+    private StatusBarLine statusBarLine;
 
     @FXML
     public void initialize() {
         graphController.initialize();
         signalController.initialize();
         regulatorController.initialize(this);
+        statusBarLine = new StatusBarLine(checkIcon, progressIndicator, statusBar, warningIcon);
     }
 
     public void handleGenerate() {
-        checkSignalParameters();
+        checkEmptyFields();
         setStatusBar();
         show();
         checkGenerationState();
-    }
-
-    private void checkSignalParameters() {
-        if (graphTypeComboBox.getSelectionModel().getSelectedItem().equals(GraphTypes.REGULATOR.getTypeName())) {
-            graphTypeComboBox.getSelectionModel().select(0); // отображать сигнал
-        } else {
-            signalController.parseSignalParameters();
-        }
-
-        checkEmptyFields();
     }
 
     private void checkEmptyFields() {
@@ -127,24 +123,21 @@ public class MainController implements BaseController {
 
         if (!signalController.checkEmptyTextFields()) {
             buttonPressedCounter++;
+            signalController.parseSignalParameters();
         } else {
             Platform.runLater(() -> statusBarLine.setStatus("Перед генерацией необходимо указать параметры сигнала",
-                    statusBar, checkIcon, warningIcon));
+                    false));
         }
     }
 
     private void setStatusBar() {
         if (buttonPressedCounter % 2 != 0 && signalParametersSet) {
-            toggleProgressIndicatorState(false);
-            Platform.runLater(() -> statusBarLine.setStatus("Генерация сигнала", statusBar));
+            Platform.runLater(() -> statusBarLine.setStatusOfProgress("Генерация сигнала"));
         } else if (buttonPressedCounter % 2 == 0 && signalParametersSet) {
-            toggleProgressIndicatorState(true);
-            toggleUiElementsState(false);
-            Platform.runLater(() -> signalController.getSignalModel().getIntermediateList().clear());
-
-            statusBarLine.setStatusOk(true);
-            Platform.runLater(() -> statusBarLine.setStatus("Генерация сигнала остановлена", statusBar,
-                    checkIcon, warningIcon));
+            Platform.runLater(() -> {
+                statusBarLine.clearStatusBar();
+                statusBarLine.setStatus("Генерация сигнала остановлена", true);
+            });
         }
     }
 
@@ -160,6 +153,8 @@ public class MainController implements BaseController {
         if (buttonPressedCounter % 2 == 0 && signalParametersSet) {
             controllerManager.setFinished(true);
             showSignal.interrupt();
+            graphController.clearGraph();
+            setDefaultState();
             generateButton.setText("Генерировать");
             toggleUiElementsState(false);
         } else if (signalParametersSet) {
@@ -167,6 +162,32 @@ public class MainController implements BaseController {
             generateButton.setText("Остановить генерацию");
             toggleUiElementsState(true);
         }
+    }
+
+    private void setDefaultState() {
+        Platform.runLater(() -> {
+            receivedAmplitudeTextField.setText("0.0");
+            receivedDCTextField.setText("0.0");
+            receivedFrequencyTextField.setText("0.0");
+            receivedRMSTextField.setText("0.0");
+
+            toggleProgressIndicatorState(true);
+            toggleUiElementsState(false);
+            graphController.toggleFilter(false);
+            verticalScalesComboBox.getSelectionModel().select(3);
+            horizontalScalesComboBox.getSelectionModel().select(2);
+            decimalFormatComboBox.getSelectionModel().select(1);
+            graphTypeComboBox.getSelectionModel().select(0);
+            filterTypesComboBox.getSelectionModel().select(0);
+            filterTextField.setText("0");
+
+            amplitudeTextField.setText("4");
+            frequencyTextField.setText("10");
+            phaseTextField.setText("0");
+            dcTextField.setText("0");
+            signalTypeComboBox.getSelectionModel().select(0);
+            noiseTypesComboBox.getSelectionModel().select(0);
+        });
     }
 
     private void toggleUiElementsState(boolean isDisable) {
@@ -214,6 +235,7 @@ public class MainController implements BaseController {
                     signalController.showSignalParameters();
                     graphController.clearGraph();
                     graphController.showSignal();
+                    Utils.sleep(500);
                 }
             }
         });
@@ -245,12 +267,16 @@ public class MainController implements BaseController {
         return decimalFormatComboBox;
     }
 
-    public ComboBox<String> getFilterTypesComboBox() {
-        return filterTypesComboBox;
+    public Label getFilterLabel() {
+        return filterLabel;
     }
 
-    public Label getDecimalFormatLabel() {
-        return decimalFormatLabel;
+    public TextField getFilterTextField() {
+        return filterTextField;
+    }
+
+    public ComboBox<String> getFilterTypesComboBox() {
+        return filterTypesComboBox;
     }
 
     public Label getFrequencyLabel() {
@@ -327,6 +353,10 @@ public class MainController implements BaseController {
 
     public ComboBox<String> getSignalTypeComboBox() {
         return signalTypeComboBox;
+    }
+
+    public StatusBarLine getStatusBarLine() {
+        return statusBarLine;
     }
 
     public ComboBox<String> getVerticalScalesComboBox() {

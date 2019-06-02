@@ -33,6 +33,7 @@ public class SignalController {
         setDigitFilter(mainController.getDcTextField());
         setDigitFilter(mainController.getFrequencyTextField());
         setDigitFilter(mainController.getPhaseTextField());
+        setDigitFilter(mainController.getFilterTextField());
     }
 
     private void setDigitFilter(TextField textField) {

@@ -6,13 +6,16 @@ import org.vitrivr.cineast.core.util.dsp.fft.windows.HanningWindow;
 import ru.Controllers.Signal.NoiseTypes;
 import ru.Controllers.Signal.SignalTypes;
 import ru.Utils.Utils;
+import uk.me.berndporr.iirj.Butterworth;
 
 import java.util.*;
 
 public class SignalModel {
     private double amplitude;
+    private Butterworth iir = new Butterworth();
     private double dc;
     private FFT fft = new FFT();
+    private boolean filterOn;
     private double frequency;
     private XYChart.Series<Number, Number> graphSeries = new XYChart.Series<>();
     private HanningWindow hanningWindow = new HanningWindow();
@@ -24,6 +27,7 @@ public class SignalModel {
     private int samples;
     private SignalParametersModel signalParametersModel = new SignalParametersModel();
     private double[] signal;
+
 
     public void generateSignal(String signalType) {
         defineSamplesRate();
@@ -40,6 +44,8 @@ public class SignalModel {
         } else if (signalType.equals(SignalTypes.NOISE.getTypeName())) {
             generateNoise();
         }
+
+        filterSignal();
     }
 
     private void defineSamplesRate() {
@@ -63,7 +69,9 @@ public class SignalModel {
             setNoise();
             double channelPhase = Math.toRadians(phase);
             signal[i] = dc + (amplitude + noiseCoefficient) * Math.sin(2 * Math.PI * frequency * i / samples + channelPhase);
+            signal[i] = iir.filter(signal[i]);
         }
+
     }
 
     private void generatePulse() {
@@ -119,7 +127,17 @@ public class SignalModel {
         }
     }
 
+    private void filterSignal() {
+        for (int i = 0; i < signal.length; i++) {
+            if (filterOn) {
+                signal[i] = iir.filter(signal[i]);
+            }
+        }
+    }
+
     public void fillIntermediateList(boolean isFFT) {
+        intermediateList.clear();
+
         if (isFFT) {
             fft.forward(signal, signal.length, hanningWindow);
             for (int i = 0; i < fft.getMagnitudeSpectrum().size(); i++) {
@@ -184,6 +202,14 @@ public class SignalModel {
 
     public void setDc(double dc) {
         this.dc = dc;
+    }
+
+    public void setFilter(int order, int cutoffFrequency) {
+        iir.lowPass(order, signal.length, cutoffFrequency);
+    }
+
+    public void setFilterOn(boolean filterOn) {
+        this.filterOn = filterOn;
     }
 
     public void setFrequency(double frequency) {

@@ -2,6 +2,7 @@ package ru.Utils;
 
 import javafx.application.Platform;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.paint.Color;
 import org.controlsfx.control.StatusBar;
 
@@ -9,25 +10,32 @@ import static java.lang.Thread.sleep;
 
 public class StatusBarLine {
     private Label checkIcon;
-    private boolean isStatusOk;
+    private ProgressIndicator progressIndicator;
     private StatusBar statusBar;
     private Thread statusBarThread;
     private Label warningIcon;
 
-    public void setStatus(String text, StatusBar statusBar) {
+    public StatusBarLine(Label checkIcon, ProgressIndicator progressIndicator, StatusBar statusBar, Label warningIcon) {
+        this.checkIcon = checkIcon;
+        this.progressIndicator = progressIndicator;
         this.statusBar = statusBar;
-        clearStatusBar();
-        toggleIconsState("-fx-opacity: 0;");
-        statusBar.setStyle("-fx-padding: 0 0 0 9.2;");
-        statusBar.setText(text);
-        handleStatusBar();
+        this.warningIcon = warningIcon;
     }
 
-    private void toggleIconsState(String state) {
-        if (checkIcon != null && warningIcon != null) {
-            checkIcon.setStyle(state);
-            warningIcon.setStyle(state);
-        }
+    public void setStatusOfProgress(String text) {
+        clearStatusBar();
+        toggleProgressIndicator(false);
+        Platform.runLater(() -> {
+            hideIcons();
+            statusBar.setStyle("-fx-padding: 0 0 0 9.2;");
+            statusBar.setText(text);
+            handleStatusBar();
+        });
+    }
+
+    private void hideIcons() {
+        checkIcon.setStyle("-fx-opacity: 0;");
+        warningIcon.setStyle("-fx-opacity: 0;");
     }
 
     private void handleStatusBar() {
@@ -41,7 +49,7 @@ public class StatusBarLine {
         statusBarThread = new Thread(() -> {
             try {
                 sleep(5000);
-                Platform.runLater(() -> clearStatusBar());
+                clearStatusBar();
             } catch (InterruptedException ignored) {
             }
         });
@@ -49,24 +57,22 @@ public class StatusBarLine {
         statusBarThread.start();
     }
 
-    public void setStatus(String text, StatusBar statusBar, Label checkIcon, Label warningIcon) {
-        this.checkIcon = checkIcon;
-        this.statusBar = statusBar;
-        this.warningIcon = warningIcon;
+    public void setStatus(String text, boolean isStatusOk) {
         clearStatusBar();
-        initIcons();
-        statusBar.setText(text);
-        handleStatusBar();
+        Platform.runLater(() -> {
+            statusBar.setText(text);
+            initIcons(isStatusOk);
+            handleStatusBar();
+        });
     }
 
-    private void initIcons() {
+    private void initIcons(boolean isStatusOk) {
         checkIcon.setTextFill(Color.web("#009700"));
         warningIcon.setTextFill(Color.web("#D30303"));
 
         if (isStatusOk) {
             checkIcon.setStyle("-fx-opacity: 1;");
             statusBar.setStyle("-fx-padding: 0 0 0 9.2;");
-            isStatusOk = false;
         } else {
             warningIcon.setStyle("-fx-opacity: 1;");
             statusBar.setStyle("-fx-padding: 0 0 0 9.2;");
@@ -74,11 +80,17 @@ public class StatusBarLine {
     }
 
     public void clearStatusBar() {
-        toggleIconsState("-fx-opacity: 0;");
-        statusBar.setText("");
+        Platform.runLater(() -> {
+            hideIcons();
+            statusBar.setText("");
+        });
     }
 
-    public void setStatusOk(boolean statusOk) {
-        isStatusOk = statusOk;
+    public void toggleProgressIndicator(boolean isHidden) {
+        if (isHidden) {
+            Platform.runLater(() -> progressIndicator.setStyle("-fx-opacity: 0;"));
+        } else {
+            Platform.runLater(() -> progressIndicator.setStyle("-fx-opacity: 1;"));
+        }
     }
 }
