@@ -1,4 +1,4 @@
-package ru.Models;
+package ru.models;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -188,7 +188,7 @@ public class SignalParametersModel {
             if (firstValue >= centerOfSignal) {
                 if (value >= centerOfSignal && firstPeriod && (value >= minAmplitude)) {
                     positivePartOfSignal = true;
-                } else if ((value < centerOfSignal && positivePartOfSignal)) {
+                } else if ((value < centerOfSignal) && positivePartOfSignal) {
                     countPeriods();
                     positivePartOfSignal = false;
                     firstPeriod = false;
@@ -212,8 +212,7 @@ public class SignalParametersModel {
             }
         }
 
-        double samplesPerPeriod = bufferedSamplesPerSemiPeriods == 0 ? 0 : (double) (bufferedSamplesPerSemiPeriods - 1) / periods;
-
+        double samplesPerPeriod = bufferedSamplesPerSemiPeriods == 0 ? 0 : (double) bufferedSamplesPerSemiPeriods / periods;
         return (samplesPerPeriod == 0 ? 0 : ((double) signal.length / samplesPerPeriod));
     }
 

@@ -19,8 +19,8 @@
  * Most of these classes are immutable and thus thread-safe.
  * However {@link org.apache.commons.lang3.CharSet} is not currently guaranteed thread-safe under all circumstances.</p>
  *
- * <p>The top level package contains various Utils classes, whilst there are various subpackages including {@link org.apache.commons.lang3.math}, {@link org.apache.commons.lang3.concurrent} and {@link org.apache.commons.lang3.builder}.
- * Using the Utils classes is generally simplicity itself.
+ * <p>The top level package contains various utils classes, whilst there are various subpackages including {@link org.apache.commons.lang3.math}, {@link org.apache.commons.lang3.concurrent} and {@link org.apache.commons.lang3.builder}.
+ * Using the utils classes is generally simplicity itself.
  * They are the equivalent of global functions in another language, a collection of stand-alone, thread-safe, static methods.
  * In contrast, subpackages may contain interfaces which may have to be implemented or classes which may need to be extended to get the full functionality from the code.
  * They may, however, contain more global-like functions.</p>

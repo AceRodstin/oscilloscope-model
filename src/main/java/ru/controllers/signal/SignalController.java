@@ -1,12 +1,13 @@
-package ru.Controllers.Signal;
+package ru.controllers.signal;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.TextField;
-import ru.Controllers.MainController;
-import ru.Models.SignalModel;
-import ru.Utils.Utils;
+import ru.controllers.MainController;
+import ru.models.SignalModel;
+import ru.utils.Utils;
 
 public class SignalController {
     private MainController mainController;
@@ -108,10 +109,9 @@ public class SignalController {
         double frequency = Utils.roundValue(signalModel.getReceivedFrequency(), decimalFormatScale);
         double rms = Utils.roundValue(signalModel.getRms(), decimalFormatScale);
 
-        mainController.getRegulatorController().getRegulatorModel().setResponseAmplitude(amplitude);
-        mainController.getRegulatorController().getRegulatorModel().setResponseDc(dc);
-        mainController.getRegulatorController().getRegulatorModel().setResponseFrequency(frequency);
-        mainController.getRegulatorController().getRegulatorModel().setResponseRms(rms);
+        mainController.getRegulatorController().setResponseAmplitude(amplitude);
+        mainController.getRegulatorController().setResponseDc(dc);
+        mainController.getRegulatorController().setResponseFrequency(frequency);
 
         Platform.runLater(() -> {
             mainController.getReceivedAmplitudeTextField().setText(Utils.convertFromExponentialFormat(amplitude, decimalFormatScale));
@@ -121,8 +121,34 @@ public class SignalController {
         });
     }
 
+    public void toggleFilter(boolean isOn) {
+        signalModel.setFilterOn(isOn);
+    }
+
+    public void fillIntermediateList(boolean isFFT) {
+        signalModel.fillIntermediateList(isFFT);
+    }
+
+    public Double getAmplitude() {
+        return signalModel.getAmplitude();
+    }
+
+    public Double getDc() {
+        return signalModel.getDc();
+    }
+
     public int getDecimalFormatScale() {
         return (int) Math.pow(10, mainController.getDecimalFormatComboBox().getSelectionModel().getSelectedIndex() + 1);
+    }
+
+    public Double getFrequency() {
+        return signalModel.getFrequency();
+    }
+
+    public Double getPhase() { return signalModel.getPhase(); }
+
+    public XYChart.Series<Number, Number> getSeries() {
+        return signalModel.getGraphSeries();
     }
 
     public SignalModel getSignalModel() {
@@ -132,4 +158,12 @@ public class SignalController {
     public String getSignalType() {
         return signalType;
     }
+
+    public void setAmplitude(double value) {
+        signalModel.setAmplitude(value);
+    }
+
+    public void setDc(double value) { signalModel.setDc(value); }
+
+    public void setFrequency(double value) { signalModel.setFrequency(value); }
 }

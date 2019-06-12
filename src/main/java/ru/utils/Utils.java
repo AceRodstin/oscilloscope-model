@@ -1,4 +1,4 @@
-package ru.Utils;
+package ru.utils;
 
 public class Utils {
     private static final int DECIMAL_SCALE_LIMIT = 7; // максимальное количество знаков после запятой

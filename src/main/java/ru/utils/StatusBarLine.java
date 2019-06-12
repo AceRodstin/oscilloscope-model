@@ -1,4 +1,4 @@
-package ru.Utils;
+package ru.utils;
 
 import javafx.application.Platform;
 import javafx.scene.control.Label;

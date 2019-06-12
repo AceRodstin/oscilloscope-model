@@ -1,11 +1,11 @@
-package ru.Models;
+package ru.models;
 
 import javafx.scene.chart.XYChart;
 import org.vitrivr.cineast.core.util.dsp.fft.FFT;
 import org.vitrivr.cineast.core.util.dsp.fft.windows.HanningWindow;
-import ru.Controllers.Signal.NoiseTypes;
-import ru.Controllers.Signal.SignalTypes;
-import ru.Utils.Utils;
+import ru.controllers.signal.NoiseTypes;
+import ru.controllers.signal.SignalTypes;
+import ru.utils.Utils;
 import uk.me.berndporr.iirj.Butterworth;
 
 import java.util.*;

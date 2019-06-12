@@ -1,18 +1,18 @@
-package ru.Controllers;
+package ru.controllers;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import org.controlsfx.control.StatusBar;
-import ru.Controllers.Graph.GraphController;
-import ru.Controllers.Graph.GraphTypes;
-import ru.Controllers.Regulator.RegulatorController;
-import ru.Controllers.Signal.SignalController;
-import ru.Utils.BaseController;
-import ru.Utils.ControllerManager;
-import ru.Utils.StatusBarLine;
-import ru.Utils.Utils;
+import ru.controllers.graph.GraphController;
+import ru.controllers.regulator.RegulatorController;
+import ru.controllers.signal.SignalController;
+import ru.utils.BaseController;
+import ru.utils.ControllerManager;
+import ru.utils.StatusBarLine;
+import ru.utils.Utils;
 
 public class MainController implements BaseController {
     @FXML
@@ -97,7 +97,7 @@ public class MainController implements BaseController {
     private int buttonPressedCounter;
     private ControllerManager controllerManager;
     private GraphController graphController = new GraphController(this);
-    private RegulatorController regulatorController = new RegulatorController();
+    private RegulatorController regulatorController = new RegulatorController(this);
     private Thread showSignal = new Thread();
     private SignalController signalController = new SignalController(this);
     private boolean signalParametersSet;
@@ -107,7 +107,6 @@ public class MainController implements BaseController {
     public void initialize() {
         graphController.initialize();
         signalController.initialize();
-        regulatorController.initialize(this);
         statusBarLine = new StatusBarLine(checkIcon, progressIndicator, statusBar, warningIcon);
     }
 
@@ -153,7 +152,7 @@ public class MainController implements BaseController {
         if (buttonPressedCounter % 2 == 0 && signalParametersSet) {
             controllerManager.setFinished(true);
             showSignal.interrupt();
-            graphController.clearGraph();
+            graphController.clearSeries();
             setDefaultState();
             generateButton.setText("Генерировать");
             toggleUiElementsState(false);
@@ -233,7 +232,7 @@ public class MainController implements BaseController {
                 if (signalParametersSet) {
                     signalController.generateSignal();
                     signalController.showSignalParameters();
-                    graphController.clearGraph();
+                    graphController.clearSeries();
                     graphController.showSignal();
                     Utils.sleep(500);
                 }
@@ -334,6 +333,8 @@ public class MainController implements BaseController {
     public RegulatorController getRegulatorController() {
         return regulatorController;
     }
+
+    public XYChart.Series<Number, Number> getSeries() { return signalController.getSignalModel().getGraphSeries(); }
 
     public Thread getShowSignalThread() {
         return showSignal;

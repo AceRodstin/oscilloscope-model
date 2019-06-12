@@ -1,4 +1,4 @@
-package ru.Utils;
+package ru.utils;
 
 public interface BaseController {
     void setControllerManager(ControllerManager controllerManager);
