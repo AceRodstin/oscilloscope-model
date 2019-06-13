@@ -51,8 +51,8 @@ class SignalController(private val mainController: MainController) {
     private fun setNoiseTypes() {
         val types = FXCollections.observableArrayList<String>(NoiseTypes.NONE.typeName, NoiseTypes.LOW.typeName,
                 NoiseTypes.MIDDLE.typeName, NoiseTypes.HIGH.typeName)
-        mainController.signalTypesComboBox.items = types
-        mainController.signalTypesComboBox.selectionModel.select(NoiseTypes.NONE.typeName)
+        mainController.noiseTypesComboBox.items = types
+        mainController.noiseTypesComboBox.selectionModel.select(NoiseTypes.NONE.typeName)
     }
 
     fun checkEmptyFields(): Boolean {
@@ -63,11 +63,10 @@ class SignalController(private val mainController: MainController) {
     }
 
     fun generateSignal() {
-        parseSignalParameters()
         signalModel.generateSignal(signalType, noiseType)
     }
 
-    private fun parseSignalParameters() {
+    fun parseSignalParameters() {
         signalModel.amplitude = mainController.amplitudeTextField.text.toDouble()
         signalModel.dc = mainController.dcTextField.text.toDouble()
         signalModel.frequency = mainController.frequencyTextField.text.toDouble()

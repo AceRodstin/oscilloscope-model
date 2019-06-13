@@ -54,10 +54,10 @@ class SignalParametersModel {
 
         // Copy piece of date
         var i = 0
-        for (index in 0..signal.size) channelData[i++] = signal[index]
+        for (index in 0 until signal.size) channelData[i++] = signal[index]
 
         // Define max and min values
-        for (index in 0..pieces) {
+        for (index in 0 until pieces) {
             val pieceOfDate = DoubleArray(channelData.size / pieces)
             System.arraycopy(channelData, index * pieceOfDate.size, pieceOfDate, 0, pieceOfDate.size)
             val statistic = Arrays.stream(pieceOfDate).summaryStatistics()
@@ -70,7 +70,7 @@ class SignalParametersModel {
         var min = Double.MAX_VALUE
         var indexOfMax = 0
         var indexOfMin = 0
-        for (index in 0..maxValues.size) {
+        for (index in 0 until maxValues.size) {
             if (max < maxValues[index]) {
                 max = maxValues[index]
                 indexOfMax = index
@@ -86,7 +86,7 @@ class SignalParametersModel {
         // Calculate average of maxValues and minValues
         max = 0.0
         min = 0.0
-        for (index in 0..maxValues.size) {
+        for (index in 0 until maxValues.size) {
             max += maxValues[index] / maxValues.size
             min += minValues[index] / minValues.size
         }
@@ -112,8 +112,7 @@ class SignalParametersModel {
     private fun calculateFrequency(): Double {
         val estimatedFrequency = estimateFrequency()
         val accuracyCoefficient = 500
-        if (estimatedFrequency < accuracyCoefficient) return defineFrequency()
-        else return estimatedFrequency.toDouble()
+        return if (estimatedFrequency < accuracyCoefficient) defineFrequency() else estimatedFrequency.toDouble()
     }
 
     private fun estimateFrequency(): Int {
@@ -137,9 +136,8 @@ class SignalParametersModel {
 
     private fun defineFrequency(): Double {
         val shift = 1000
-        val isFirstPeriod = false
-        val isPositivePartOfSignal = true
-        val filteringCoefficient = 1.05
+        var isFirstPeriod = false
+        var isPositivePartOfSignal = signal[0] <= (dc + shift)
         bufferedSamplesPerSemiPeriods = 0
         periods = 0
         samplesPerSemiPeriod = 0
@@ -148,26 +146,28 @@ class SignalParametersModel {
         for (value in signal) {
             val shiftedValue = value + shift
             val centerOfSignal = dc + shift
-            val lowerBound = if (centerOfSignal < 0) centerOfSignal * filteringCoefficient else centerOfSignal / filteringCoefficient
-            val upperBound = if (centerOfSignal < 0) centerOfSignal / filteringCoefficient else centerOfSignal * filteringCoefficient
 
             if (zeroTransitionCounter >= 1) samplesPerSemiPeriod++
 
-            if (shiftedValue >= upperBound && isFirstPeriod) {
-            } else if (shiftedValue < lowerBound && isPositivePartOfSignal) {
+            if (shiftedValue >= centerOfSignal && isFirstPeriod) {
+                isPositivePartOfSignal = true
+            } else if (shiftedValue < centerOfSignal && isPositivePartOfSignal) {
                 countPeriods()
-            } else if (value >= upperBound && !isFirstPeriod && !isPositivePartOfSignal) {
+                isPositivePartOfSignal = false
+                isFirstPeriod = false
+            } else if (shiftedValue >= centerOfSignal && !isFirstPeriod && !isPositivePartOfSignal) {
                 countPeriods()
+                isPositivePartOfSignal = true
             }
         }
 
-        val samplesPerPeriod = if (bufferedSamplesPerSemiPeriods == 0) 0 else bufferedSamplesPerSemiPeriods / periods
-        return if (samplesPerPeriod == 0) 0.0 else signal.size.toDouble() / samplesPerPeriod.toDouble()
+        val samplesPerPeriod = if (bufferedSamplesPerSemiPeriods == 0) 0.0 else bufferedSamplesPerSemiPeriods.toDouble() / periods.toDouble()
+        return if (samplesPerPeriod == 0.0) 0.0 else signal.size.toDouble() / samplesPerPeriod
     }
 
     private fun countPeriods() {
         zeroTransitionCounter++
-        if (zeroTransitionCounter % 2 !=0 && zeroTransitionCounter > 2) {
+        if (zeroTransitionCounter % 2 != 0 && zeroTransitionCounter > 2) {
             bufferedSamplesPerSemiPeriods = samplesPerSemiPeriod
             periods++
         }

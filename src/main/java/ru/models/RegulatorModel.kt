@@ -36,7 +36,7 @@ class RegulatorModel {
 
     private fun correct(response: Double, neededValue: Double): Double {
         val error = neededValue - response
-        var pValue = pCoefficient * error
+        val pValue = pCoefficient * error
         var iValue = iCoefficient * error
 
         if (calculationCount % 2 == 0) {

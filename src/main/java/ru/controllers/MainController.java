@@ -113,6 +113,7 @@ public class MainController implements BaseController {
     public void handleGenerate() {
         checkEmptyFields();
         setStatusBar();
+        signalController.parseSignalParameters();
         show();
         checkGenerationState();
     }

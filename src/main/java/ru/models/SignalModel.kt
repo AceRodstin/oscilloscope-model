@@ -12,7 +12,7 @@ import kotlin.collections.ArrayList
 import kotlin.math.*
 
 class SignalModel {
-    var amplitude = 0.0
+    var amplitude: Double = 0.0
         get() = Utils.roundValue(field, 100_000)
     private val butterworth = Butterworth()
     var dc = 0.0
@@ -24,7 +24,7 @@ class SignalModel {
     private val hanningWindow = HanningWindow()
     val intermediateList = ArrayList<XYChart.Data<Number, Number>>()
     var isFilterEnable = false
-    var noiseCoefficient = 0.0
+    private var noiseCoefficient = 0.0
     var phase = 0.0
         get() = Utils.roundValue(field, 100_000)
     val random = Random()
@@ -58,8 +58,9 @@ class SignalModel {
     private fun generateSin(noiseType: NoiseTypes) {
         for (index in 0 until (samples + 1)) {
             setNoise(noiseType)
-            signal[index] = dc + (amplitude + noiseCoefficient) * sin(2 * PI * frequency * (index / samples)
-                    + Math.toRadians(phase))
+            signal[index] = dc + (amplitude + noiseCoefficient) * sin(2 * PI * frequency *
+                    (index.toDouble() / samples.toDouble()) + Math.toRadians(phase))
+
         }
     }
 
@@ -86,15 +87,15 @@ class SignalModel {
         for (index in 0 until (samples + 1)) {
             setNoise(noiseType)
             signal[index] = dc + (amplitude + noiseCoefficient) * Math.signum(sin(2 * PI * frequency *
-                    (index / samples) + Math.toRadians(phase)))
+                    (index.toDouble() / samples.toDouble()) + Math.toRadians(phase)))
         }
     }
 
     private fun generateTriangles(noiseType: NoiseTypes) {
         for (index in 0 until (samples + 1)) {
             setNoise(noiseType)
-            signal[index] = dc + (2 * (amplitude + noiseCoefficient)) / PI * asin(sin(2 * PI * frequency * index
-                    / samples + Math.toRadians(phase)))
+            signal[index] = dc + (2 * (amplitude + noiseCoefficient)) / PI * asin(sin(2 * PI * frequency *
+                    index.toDouble() / samples.toDouble() + Math.toRadians(phase)))
         }
     }
 
@@ -102,7 +103,7 @@ class SignalModel {
         for (index in 0 until (samples + 1)) {
             setNoise(noiseType)
             signal[index] = dc + (-2 * (amplitude + noiseCoefficient)) / PI * atan(1.0 / tan(index.toDouble() /
-            samples * PI * frequency + Math.toRadians(phase)))
+            samples.toDouble() * PI * frequency + Math.toRadians(phase)))
         }
     }
 
@@ -110,7 +111,7 @@ class SignalModel {
         for (index in 0 until (samples + 1)) {
             setNoise(noiseType)
             signal[index] = dc + (amplitude + noiseCoefficient) * random.nextDouble() * sin(2 * PI * (frequency +
-                    random.nextDouble()) * index / samples + Math.toRadians(phase))
+                    random.nextDouble()) * index.toDouble() / samples.toDouble() + Math.toRadians(phase))
         }
     }
 
