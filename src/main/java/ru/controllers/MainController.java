@@ -118,11 +118,10 @@ public class MainController implements BaseController {
     }
 
     private void checkEmptyFields() {
-        signalParametersSet = !signalController.checkEmptyTextFields();
+        signalParametersSet = !signalController.checkEmptyFields();
 
-        if (!signalController.checkEmptyTextFields()) {
+        if (!signalController.checkEmptyFields()) {
             buttonPressedCounter++;
-            signalController.parseSignalParameters();
         } else {
             Platform.runLater(() -> statusBarLine.setStatus("Перед генерацией необходимо указать параметры сигнала",
                     false));
@@ -318,7 +317,7 @@ public class MainController implements BaseController {
         return receivedAmplitudeTextField;
     }
 
-    public TextField getReceivedDCTextField() {
+    public TextField getReceivedDcTextField() {
         return receivedDCTextField;
     }
 
@@ -326,15 +325,13 @@ public class MainController implements BaseController {
         return receivedFrequencyTextField;
     }
 
-    public TextField getReceivedRmsTextField() {
+    public TextField getRmsTextField() {
         return receivedRMSTextField;
     }
 
     public RegulatorController getRegulatorController() {
         return regulatorController;
     }
-
-    public XYChart.Series<Number, Number> getSeries() { return signalController.getSignalModel().getGraphSeries(); }
 
     public Thread getShowSignalThread() {
         return showSignal;
@@ -352,7 +349,7 @@ public class MainController implements BaseController {
         return signalTypeLabel;
     }
 
-    public ComboBox<String> getSignalTypeComboBox() {
+    public ComboBox<String> getSignalTypesComboBox() {
         return signalTypeComboBox;
     }
 

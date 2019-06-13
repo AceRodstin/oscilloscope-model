@@ -21,7 +21,7 @@ class GraphController(private val mainController: MainController) {
     }
 
     private fun initializeGraph() {
-        mainController.graph.data.add(mainController.series)
+        mainController.graph.data.add(mainController.signalController.getSeries())
     }
 
     private fun initializeGraphSettings() {
@@ -203,22 +203,22 @@ class GraphController(private val mainController: MainController) {
 
     private fun listen(textField: TextField) {
         textField.textProperty().addListener { _, _, newValue ->
-            var cutoffFrequency = 50 // default value
+            var cutoffFrequency = 50.0 // default value
             val filterOrder = 2 // default value
 
             if (textField.text.isNotEmpty() && textField.text != "-") {
-                cutoffFrequency = newValue.toDouble().toInt()
+                cutoffFrequency = newValue.toDouble()
             }
 
-            mainController.signalController.signalModel.setFilter(filterOrder, cutoffFrequency)
+            mainController.signalController.setFilter(filterOrder, cutoffFrequency)
         }
     }
 
     fun showSignal() {
         val graphType = mainController.graphTypeComboBox.selectionModel.selectedItem
         val isFFT = graphType == GraphTypes.SPECTRUM.typeName
-        val intermediateList = mainController.signalController.signalModel.intermediateList
-        val graphSeries = mainController.signalController.signalModel.graphSeries
+        val intermediateList = mainController.signalController.getIntermediateList()
+        val graphSeries = mainController.signalController.getSeries()
 
         mainController.signalController.fillIntermediateList(isFFT)
         graphModel.parse(mainController.horizontalScalesComboBox.selectionModel.selectedItem)

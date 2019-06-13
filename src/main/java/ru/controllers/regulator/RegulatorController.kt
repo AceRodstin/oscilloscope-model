@@ -17,7 +17,7 @@ class RegulatorController(val mainController: MainController) {
     fun toggleRegulator(isEnable: Boolean) {
         isRegulatorEnabled = isEnable
         listenTextFields()
-        listen(mainController.signalTypeComboBox)
+        listen(mainController.signalTypesComboBox)
         toggleUiElements()
         correctControlledParameter()
     }
@@ -73,13 +73,13 @@ class RegulatorController(val mainController: MainController) {
             Platform.runLater {
                 mainController.signalSettingsLabel.text = "Настройки генерируемого сигнала:"
                 mainController.amplitudeLabel.text = "Амплитуда, В:"
-                mainController.amplitudeTextField.text = mainController.signalController.amplitude.toString()
+                mainController.amplitudeTextField.text = mainController.signalController.getAmplitude().toString()
                 mainController.frequencyLabel.text = "Частота, Гц:"
-                mainController.frequencyTextField.text = mainController.signalController.frequency.toString()
+                mainController.frequencyTextField.text = mainController.signalController.getFrequency().toString()
                 mainController.phaseLabel.text = "Фаза, °:"
-                mainController.phaseTextField.text = mainController.signalController.phase.toString()
+                mainController.phaseTextField.text = mainController.signalController.getPhase().toString()
                 mainController.dcLabel.text = "Статика, В:"
-                mainController.dcTextField.text = mainController.signalController.dc.toString()
+                mainController.dcTextField.text = mainController.signalController.getDc().toString()
                 mainController.signalTypeLabel.text = "Тип сигнала:"
                 setSignalTypes()
             }
@@ -97,19 +97,19 @@ class RegulatorController(val mainController: MainController) {
             mainController.dcLabel.isDisable = !isRegulatorEnabled
             mainController.dcTextField.isDisable = !isRegulatorEnabled
             mainController.signalTypeLabel.isDisable = !isRegulatorEnabled
-            mainController.signalTypeComboBox.isDisable = !isRegulatorEnabled
+            mainController.signalTypesComboBox.isDisable = !isRegulatorEnabled
         }
     }
 
     private fun setControlledParameters() {
         val parameters = FXCollections.observableArrayList<String>(ControlledParameters.AMPLITUDE.parameterName,
                 ControlledParameters.DC.parameterName, ControlledParameters.FREQUENCY.parameterName)
-        mainController.signalTypeComboBox.items = parameters
+        mainController.signalTypesComboBox.items = parameters
 
         when (regulatorModel.selectedParameter) {
-            ControlledParameters.AMPLITUDE -> mainController.signalTypeComboBox.selectionModel.select(ControlledParameters.AMPLITUDE.parameterName)
-            ControlledParameters.DC -> mainController.signalTypeComboBox.selectionModel.select(ControlledParameters.DC.parameterName)
-            ControlledParameters.FREQUENCY -> mainController.signalTypeComboBox.selectionModel.select(ControlledParameters.FREQUENCY.parameterName)
+            ControlledParameters.AMPLITUDE -> mainController.signalTypesComboBox.selectionModel.select(ControlledParameters.AMPLITUDE.parameterName)
+            ControlledParameters.DC -> mainController.signalTypesComboBox.selectionModel.select(ControlledParameters.DC.parameterName)
+            ControlledParameters.FREQUENCY -> mainController.signalTypesComboBox.selectionModel.select(ControlledParameters.FREQUENCY.parameterName)
         }
     }
 
@@ -118,9 +118,18 @@ class RegulatorController(val mainController: MainController) {
             Thread {
                 while (isRegulatorEnabled && !mainController.controllerManager.isFinished) {
                     when (regulatorModel.selectedParameter) {
-                        ControlledParameters.AMPLITUDE -> mainController.signalController.amplitude += regulatorModel.getCorrection()
-                        ControlledParameters.DC -> mainController.signalController.dc += regulatorModel.getCorrection()
-                        ControlledParameters.FREQUENCY -> mainController.signalController.frequency += regulatorModel.getCorrection()
+                        ControlledParameters.AMPLITUDE -> {
+                            val oldValue = mainController.signalController.getAmplitude()
+                            mainController.signalController.setAmplitude(oldValue + regulatorModel.getCorrection())
+                        }
+                        ControlledParameters.DC -> {
+                            val oldValue = mainController.signalController.getDc()
+                            mainController.signalController.setDc(oldValue + regulatorModel.getCorrection())
+                        }
+                        ControlledParameters.FREQUENCY -> {
+                            val oldValue = mainController.signalController.getFrequency()
+                            mainController.signalController.setFrequency(oldValue + regulatorModel.getCorrection())
+                        }
                     }
                     Utils.sleep(1000)
                 }
@@ -132,8 +141,8 @@ class RegulatorController(val mainController: MainController) {
         val types = FXCollections.observableArrayList<String>(SignalTypes.SINE.typeName,
                 SignalTypes.PULSE.typeName, SignalTypes.TRIANGLES.typeName, SignalTypes.SAW.typeName,
                 SignalTypes.NOISE.typeName)
-        mainController.signalTypeComboBox.items = types
-        mainController.signalTypeComboBox.selectionModel.select(mainController.signalController.signalType)
+        mainController.signalTypesComboBox.items = types
+        mainController.signalTypesComboBox.selectionModel.select(mainController.signalController.signalType.typeName)
     }
 
     fun setResponseAmplitude(value: Double) {
