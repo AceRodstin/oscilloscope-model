@@ -15,7 +15,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.controlsfx.control.StatusBar?>
 
-<AnchorPane minHeight="720.0" minWidth="1280.0" prefHeight="720.0" prefWidth="1280.0" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.Controllers.MainController">
+<AnchorPane minHeight="720.0" minWidth="1280.0" prefHeight="720.0" prefWidth="1280.0" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.controllers.MainController">
    <children>
       <GridPane layoutX="604.0" layoutY="209.0" prefHeight="720.0" prefWidth="1280.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="0.0">
         <columnConstraints>
@@ -69,11 +69,11 @@
             <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="wrapper" stylesheets="@../css/main.css" GridPane.columnSpan="15" GridPane.rowIndex="4" GridPane.rowSpan="3" />
             <Label fx:id="receivedAmplitudeLabel" disable="true" text="Амплитуда, В:" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
             <TextField fx:id="receivedAmplitudeTextField" disable="true" GridPane.columnIndex="3" GridPane.rowIndex="5" />
-            <Label fx:id="receivedDCLabel" disable="true" text="Статика, В:" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
-            <TextField fx:id="receivedDCTextField" disable="true" GridPane.columnIndex="5" GridPane.rowIndex="5" />
+            <Label fx:id="receivedDcLabel" disable="true" text="Статика, В:" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
+            <TextField fx:id="receivedDcTextField" disable="true" GridPane.columnIndex="5" GridPane.rowIndex="5" />
             <Label fx:id="receivedFrequencyLabel" disable="true" text="Частота, Гц:" GridPane.columnIndex="9" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
             <TextField fx:id="receivedFrequencyTextField" disable="true" GridPane.columnIndex="9" GridPane.rowIndex="5" />
-            <Label fx:id="receivedRMSLabel" disable="true" text="RMS, В:" GridPane.columnIndex="11" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
+            <Label fx:id="receivedRmsLabel" disable="true" text="RMS, В:" GridPane.columnIndex="11" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
             <Label styleClass="chart-title" text="Настройки графика:" GridPane.columnSpan="7" GridPane.halignment="CENTER" GridPane.rowIndex="7">
                <font>
                   <Font name="Arial Bold" size="16.0" />
@@ -84,8 +84,8 @@
             <ComboBox fx:id="verticalScalesComboBox" disable="true" prefWidth="150.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="9" />
             <Label fx:id="horizontalScalesLabel" disable="true" text="Горизонт. масштаб:" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="8" />
             <ComboBox fx:id="horizontalScalesComboBox" disable="true" prefWidth="150.0" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="9" />
-            <Label fx:id="graphTypeLabel" disable="true" text="Отображать:" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="11" />
-            <ComboBox fx:id="graphTypeComboBox" disable="true" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="12" />
+            <Label fx:id="graphTypesLabel" disable="true" text="Отображать:" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="11" />
+            <ComboBox fx:id="graphTypesComboBox" disable="true" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="12" />
             <Label fx:id="filterTypesLabel" disable="true" text="Цифровой фильтр:" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="11" />
             <ComboBox fx:id="filterTypesComboBox" disable="true" prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="12" />
             <Label fx:id="signalSettingsLabel" styleClass="chart-title" text="Настройки генерируемого сигнала:" GridPane.columnIndex="8" GridPane.columnSpan="7" GridPane.halignment="CENTER" GridPane.rowIndex="7">
@@ -115,9 +115,11 @@
             <ProgressIndicator fx:id="progressIndicator" maxWidth="15.0" mouseTransparent="true" style="-fx-opacity: 0;" GridPane.rowIndex="15" />
             <Label fx:id="warningIcon" alignment="CENTER" contentDisplay="CENTER" style="-fx-font-size: 22px; -fx-opacity: 0;" text="⚠︎" GridPane.rowIndex="15" />
             <Label fx:id="checkIcon" style="-fx-font-size: 26px; -fx-opacity: 0;" text="✔" GridPane.rowIndex="15" />
-            <TextField fx:id="receivedRMSTextField" disable="true" GridPane.columnIndex="11" GridPane.rowIndex="5" />
+            <TextField fx:id="receivedRmsTextField" disable="true" GridPane.columnIndex="11" GridPane.rowIndex="5" />
             <Label fx:id="decimalFormatLabel" disable="true" text="Десятичн. знаков:" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.rowIndex="8" />
             <ComboBox fx:id="decimalFormatComboBox" disable="true" prefWidth="150.0" GridPane.columnIndex="5" GridPane.rowIndex="9" />
+            <Label fx:id="filterLabel" text="Частота среза:" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.rowIndex="11" />
+            <TextField fx:id="filterTextField" GridPane.columnIndex="5" GridPane.rowIndex="12" />
          </children>
       </GridPane>
    </children>

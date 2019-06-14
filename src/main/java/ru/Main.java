@@ -5,8 +5,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import ru.Controllers.MainController;
-import ru.Utils.ControllerManager;
+import ru.controllers.MainController;
+import ru.utils.ControllerManager;
 
 import java.io.IOException;
 
