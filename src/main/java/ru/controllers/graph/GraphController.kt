@@ -99,13 +99,13 @@ class GraphController(private val mainController: MainController) {
     private fun setGraphTypes() {
         val types = FXCollections.observableArrayList<String>(GraphTypes.SIGNAL.typeName, GraphTypes.SPECTRUM.typeName,
                 GraphTypes.REGULATOR.typeName)
-        mainController.graphTypeComboBox.items = types
-        mainController.graphTypeComboBox.selectionModel.select(GraphTypes.SIGNAL.typeName)
+        mainController.graphTypesComboBox.items = types
+        mainController.graphTypesComboBox.selectionModel.select(GraphTypes.SIGNAL.typeName)
     }
 
     private fun listenGraphTypes() {
-        mainController.graphTypeComboBox.valueProperty().addListener { _ ->
-            val selectedType = mainController.graphTypeComboBox.selectionModel.selectedItem
+        mainController.graphTypesComboBox.valueProperty().addListener { _ ->
+            val selectedType = mainController.graphTypesComboBox.selectionModel.selectedItem
             when (selectedType) {
                 GraphTypes.SIGNAL.typeName -> {
                     restartShowDataThread()
@@ -215,7 +215,7 @@ class GraphController(private val mainController: MainController) {
     }
 
     fun showSignal() {
-        val graphType = mainController.graphTypeComboBox.selectionModel.selectedItem
+        val graphType = mainController.graphTypesComboBox.selectionModel.selectedItem
         val isFFT = graphType == GraphTypes.SPECTRUM.typeName
         val intermediateList = mainController.signalController.getIntermediateList()
         val graphSeries = mainController.signalController.getSeries()
@@ -250,5 +250,22 @@ class GraphController(private val mainController: MainController) {
 
     private fun add(point: XYChart.Data<Number, Number>, series: XYChart.Series<Number, Number>) {
         if (!series.data.contains(point)) Platform.runLater { series.data.add(point) }
+    }
+
+    fun toggleUiElementsState(isDisable: Boolean) {
+        Platform.runLater {
+            mainController.verticalScalesLabel.setDisable(!isDisable)
+            mainController.verticalScalesComboBox.setDisable(!isDisable)
+            mainController.horizontalScalesLabel.setDisable(!isDisable)
+            mainController.horizontalScalesComboBox.setDisable(!isDisable)
+            mainController.decimalFormatComboBox.setDisable(!isDisable)
+            mainController.decimalFormatLabel.setDisable(!isDisable)
+            mainController.graphTypesLabel.setDisable(!isDisable)
+            mainController.graphTypesComboBox.setDisable(!isDisable)
+            mainController.filterTypesLabel.setDisable(!isDisable)
+            mainController.filterTypesComboBox.setDisable(!isDisable)
+            mainController.filterLabel.setDisable(!isDisable)
+            mainController.filterTextField.setDisable(!isDisable)
+        }
     }
 }

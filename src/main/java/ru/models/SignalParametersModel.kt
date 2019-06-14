@@ -136,28 +136,44 @@ class SignalParametersModel {
 
     private fun defineFrequency(): Double {
         val shift = 1000
+        val firstValue = signal[0] + shift
         var isFirstPeriod = false
-        var isPositivePartOfSignal = signal[0] <= (dc + shift)
+        var isPositivePartOfSignal = (firstValue <= (dc + shift))
         bufferedSamplesPerSemiPeriods = 0
         periods = 0
         samplesPerSemiPeriod = 0
         zeroTransitionCounter = 0
 
+        var i = 0
         for (value in signal) {
             val shiftedValue = value + shift
             val centerOfSignal = dc + shift
 
             if (zeroTransitionCounter >= 1) samplesPerSemiPeriod++
 
-            if (shiftedValue >= centerOfSignal && isFirstPeriod) {
-                isPositivePartOfSignal = true
-            } else if (shiftedValue < centerOfSignal && isPositivePartOfSignal) {
-                countPeriods()
-                isPositivePartOfSignal = false
-                isFirstPeriod = false
-            } else if (shiftedValue >= centerOfSignal && !isFirstPeriod && !isPositivePartOfSignal) {
-                countPeriods()
-                isPositivePartOfSignal = true
+
+            if (firstValue > centerOfSignal) {
+                if (shiftedValue >= centerOfSignal && isFirstPeriod) {
+                    isPositivePartOfSignal = true
+                } else if (shiftedValue < centerOfSignal && isPositivePartOfSignal) {
+                    countPeriods()
+                    isPositivePartOfSignal = false
+                    isFirstPeriod = false
+                } else if (shiftedValue >= centerOfSignal && !isFirstPeriod && !isPositivePartOfSignal) {
+                    countPeriods()
+                    isPositivePartOfSignal = true
+                }
+            } else {
+                if (shiftedValue < centerOfSignal && isFirstPeriod) {
+                    isPositivePartOfSignal = true
+                } else if (shiftedValue >= centerOfSignal && isPositivePartOfSignal) {
+                    countPeriods()
+                    isPositivePartOfSignal = false
+                    isFirstPeriod = false
+                } else if (shiftedValue < centerOfSignal && !isFirstPeriod && !isPositivePartOfSignal) {
+                    countPeriods()
+                    isPositivePartOfSignal = true
+                }
             }
         }
 

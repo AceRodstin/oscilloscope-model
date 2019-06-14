@@ -2,9 +2,12 @@ package ru.controllers.signal
 
 import javafx.application.Platform
 import javafx.collections.FXCollections
+import javafx.scene.Node
 import javafx.scene.chart.XYChart
+import javafx.scene.control.Control
 import javafx.scene.control.TextField
 import ru.controllers.MainController
+import ru.controllers.graph.GraphTypes
 import ru.models.SignalModel
 import ru.utils.Utils
 
@@ -12,11 +15,30 @@ import ru.utils.Utils
 class SignalController(private val mainController: MainController) {
     var noiseType = NoiseTypes.NONE
     private val signalModel = SignalModel()
+    private var signalSettings = listOf<Control>()
     var signalType = SignalTypes.SINE
 
     fun initialize() {
+        fillSignalSettings()
         initializeTextFields()
         initializeSettings()
+    }
+
+    private fun fillSignalSettings() {
+        signalSettings = listOf(
+                mainController.amplitudeLabel,
+                mainController.amplitudeTextField,
+                mainController.dcLabel,
+                mainController.dcTextField,
+                mainController.frequencyLabel,
+                mainController.frequencyTextField,
+                mainController.noiseLabel,
+                mainController.noiseTypesComboBox,
+                mainController.phaseLabel,
+                mainController.phaseTextField,
+                mainController.signalTypeComboBox,
+                mainController.signalTypeLabel
+        )
     }
 
     private fun initializeTextFields() {
@@ -104,7 +126,26 @@ class SignalController(private val mainController: MainController) {
             mainController.receivedAmplitudeTextField.text = Utils.convertFromExponentialFormat(amplitude, decimalFormat)
             mainController.receivedDcTextField.text = Utils.convertFromExponentialFormat(dc, decimalFormat)
             mainController.receivedFrequencyTextField.text = Utils.convertFromExponentialFormat(frequency, decimalFormat)
-            mainController.rmsTextField.text = Utils.convertFromExponentialFormat(rms, decimalFormat)
+            mainController.receivedRmsTextField.text = Utils.convertFromExponentialFormat(rms, decimalFormat)
+        }
+    }
+
+    fun toggleUiElementsState(isDisable: Boolean) {
+        Platform.runLater {
+            if (mainController.graphTypesComboBox.selectionModel.selectedItem != GraphTypes.REGULATOR.typeName) {
+                for (uiElement in signalSettings) uiElement.isDisable = isDisable
+            } else {
+                for (uiElement in signalSettings) uiElement.isDisable = !isDisable
+            }
+
+            mainController.receivedAmplitudeLabel.isDisable = !isDisable
+            mainController.receivedAmplitudeTextField.isDisable = !isDisable
+            mainController.receivedDcLabel.isDisable = !isDisable
+            mainController.receivedDcTextField.isDisable = !isDisable
+            mainController.receivedFrequencyLabel.isDisable = !isDisable
+            mainController.receivedFrequencyTextField.isDisable = !isDisable
+            mainController.receivedRmsLabel.isDisable = !isDisable
+            mainController.receivedRmsTextField.isDisable = !isDisable
         }
     }
 
@@ -112,27 +153,51 @@ class SignalController(private val mainController: MainController) {
         return Math.pow(10.0, (mainController.decimalFormatComboBox.selectionModel.selectedIndex + 1).toDouble()).toInt()
     }
 
-    fun toggleFilter(isEnable: Boolean) { signalModel.isFilterEnable = isEnable }
+    fun toggleFilter(isEnable: Boolean) {
+        signalModel.isFilterEnable = isEnable
+    }
 
-    fun fillIntermediateList(isFFT: Boolean) { signalModel.fillIntermediateList(isFFT) }
+    fun fillIntermediateList(isFFT: Boolean) {
+        signalModel.fillIntermediateList(isFFT)
+    }
 
-    fun getAmplitude(): Double { return signalModel.amplitude }
+    fun getAmplitude(): Double {
+        return signalModel.amplitude
+    }
 
-    fun getDc(): Double { return signalModel.dc }
+    fun getDc(): Double {
+        return signalModel.dc
+    }
 
-    fun getFrequency(): Double { return signalModel.frequency }
+    fun getFrequency(): Double {
+        return signalModel.frequency
+    }
 
-    fun getIntermediateList(): List<XYChart.Data<Number, Number>> { return signalModel.intermediateList }
+    fun getIntermediateList(): List<XYChart.Data<Number, Number>> {
+        return signalModel.intermediateList
+    }
 
-    fun getPhase(): Double { return signalModel.phase }
+    fun getPhase(): Double {
+        return signalModel.phase
+    }
 
-    fun getSeries(): XYChart.Series<Number, Number> { return signalModel.graphSeries }
+    fun getSeries(): XYChart.Series<Number, Number> {
+        return signalModel.graphSeries
+    }
 
-    fun setAmplitude(value: Double) { signalModel.amplitude = value }
+    fun setAmplitude(value: Double) {
+        signalModel.amplitude = value
+    }
 
-    fun setDc(value: Double) { signalModel.dc = value }
+    fun setDc(value: Double) {
+        signalModel.dc = value
+    }
 
-    fun setFilter(filterOrder: Int, cutoffFrequency: Double) { signalModel.setFilter(filterOrder, cutoffFrequency) }
+    fun setFilter(filterOrder: Int, cutoffFrequency: Double) {
+        signalModel.setFilter(filterOrder, cutoffFrequency)
+    }
 
-    fun setFrequency(value: Double) { signalModel.frequency = value }
+    fun setFrequency(value: Double) {
+        signalModel.frequency = value
+    }
 }

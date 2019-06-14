@@ -3,10 +3,10 @@ package ru.controllers;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
-import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import org.controlsfx.control.StatusBar;
 import ru.controllers.graph.GraphController;
+import ru.controllers.graph.GraphTypes;
 import ru.controllers.regulator.RegulatorController;
 import ru.controllers.signal.SignalController;
 import ru.utils.BaseController;
@@ -46,9 +46,9 @@ public class MainController implements BaseController {
     @FXML
     private LineChart<Number, Number> graph;
     @FXML
-    private ComboBox<String> graphTypeComboBox;
+    private ComboBox<String> graphTypesComboBox;
     @FXML
-    private Label graphTypeLabel;
+    private Label graphTypesLabel;
     @FXML
     private ComboBox<String> horizontalScalesComboBox;
     @FXML
@@ -68,17 +68,17 @@ public class MainController implements BaseController {
     @FXML
     private TextField receivedAmplitudeTextField;
     @FXML
-    private Label receivedDCLabel;
+    private Label receivedDcLabel;
     @FXML
-    private TextField receivedDCTextField;
+    private TextField receivedDcTextField;
     @FXML
     private Label receivedFrequencyLabel;
     @FXML
     private TextField receivedFrequencyTextField;
     @FXML
-    private Label receivedRMSLabel;
+    private Label receivedRmsLabel;
     @FXML
-    private TextField receivedRMSTextField;
+    private TextField receivedRmsTextField;
     @FXML
     private Label signalSettingsLabel;
     @FXML
@@ -113,7 +113,6 @@ public class MainController implements BaseController {
     public void handleGenerate() {
         checkEmptyFields();
         setStatusBar();
-        signalController.parseSignalParameters();
         show();
         checkGenerationState();
     }
@@ -123,9 +122,16 @@ public class MainController implements BaseController {
 
         if (!signalController.checkEmptyFields()) {
             buttonPressedCounter++;
+            parseSignalParameters();
         } else {
             Platform.runLater(() -> statusBarLine.setStatus("Перед генерацией необходимо указать параметры сигнала",
                     false));
+        }
+    }
+
+    private void parseSignalParameters() {
+        if (!graphTypesComboBox.getSelectionModel().getSelectedItem().equals(GraphTypes.REGULATOR.getTypeName())) {
+            signalController.parseSignalParameters();
         }
     }
 
@@ -135,16 +141,9 @@ public class MainController implements BaseController {
         } else if (buttonPressedCounter % 2 == 0 && signalParametersSet) {
             Platform.runLater(() -> {
                 statusBarLine.clearStatusBar();
+                statusBarLine.toggleProgressIndicator(true);
                 statusBarLine.setStatus("Генерация сигнала остановлена", true);
             });
-        }
-    }
-
-    private void toggleProgressIndicatorState(boolean isHidden) {
-        if (isHidden) {
-            progressIndicator.setStyle("-fx-opacity: 0;");
-        } else {
-            progressIndicator.setStyle("-fx-opacity: 1;");
         }
     }
 
@@ -153,7 +152,6 @@ public class MainController implements BaseController {
             controllerManager.setFinished(true);
             showSignal.interrupt();
             graphController.clearSeries();
-            setDefaultState();
             generateButton.setText("Генерировать");
             toggleUiElementsState(false);
         } else if (signalParametersSet) {
@@ -163,67 +161,9 @@ public class MainController implements BaseController {
         }
     }
 
-    private void setDefaultState() {
-        Platform.runLater(() -> {
-            receivedAmplitudeTextField.setText("0.0");
-            receivedDCTextField.setText("0.0");
-            receivedFrequencyTextField.setText("0.0");
-            receivedRMSTextField.setText("0.0");
-
-            toggleProgressIndicatorState(true);
-            toggleUiElementsState(false);
-            graphController.toggleFilter(false);
-            verticalScalesComboBox.getSelectionModel().select(3);
-            horizontalScalesComboBox.getSelectionModel().select(2);
-            decimalFormatComboBox.getSelectionModel().select(1);
-            graphTypeComboBox.getSelectionModel().select(0);
-            filterTypesComboBox.getSelectionModel().select(0);
-            filterTextField.setText("0");
-
-            amplitudeTextField.setText("4");
-            frequencyTextField.setText("10");
-            phaseTextField.setText("0");
-            dcTextField.setText("0");
-            signalTypeComboBox.getSelectionModel().select(0);
-            noiseTypesComboBox.getSelectionModel().select(0);
-        });
-    }
-
     private void toggleUiElementsState(boolean isDisable) {
-        Platform.runLater(() -> {
-            verticalScalesLabel.setDisable(!isDisable);
-            verticalScalesComboBox.setDisable(!isDisable);
-            horizontalScalesLabel.setDisable(!isDisable);
-            horizontalScalesComboBox.setDisable(!isDisable);
-            graphTypeLabel.setDisable(!isDisable);
-            graphTypeComboBox.setDisable(!isDisable);
-            filterTypesLabel.setDisable(!isDisable);
-            filterTypesComboBox.setDisable(!isDisable);
-            decimalFormatComboBox.setDisable(!isDisable);
-            decimalFormatLabel.setDisable(!isDisable);
-
-            amplitudeLabel.setDisable(isDisable);
-            amplitudeTextField.setDisable(isDisable);
-            dcLabel.setDisable(isDisable);
-            dcTextField.setDisable(isDisable);
-            frequencyLabel.setDisable(isDisable);
-            frequencyTextField.setDisable(isDisable);
-            noiseLabel.setDisable(isDisable);
-            noiseTypesComboBox.setDisable(isDisable);
-            phaseLabel.setDisable(isDisable);
-            phaseTextField.setDisable(isDisable);
-            signalTypeComboBox.setDisable(isDisable);
-            signalTypeLabel.setDisable(isDisable);
-
-            receivedAmplitudeLabel.setDisable(!isDisable);
-            receivedAmplitudeTextField.setDisable(!isDisable);
-            receivedDCLabel.setDisable(!isDisable);
-            receivedDCTextField.setDisable(!isDisable);
-            receivedFrequencyLabel.setDisable(!isDisable);
-            receivedFrequencyTextField.setDisable(!isDisable);
-            receivedRMSLabel.setDisable(!isDisable);
-            receivedRMSTextField.setDisable(!isDisable);
-        });
+        graphController.toggleUiElementsState(isDisable);
+        signalController.toggleUiElementsState(isDisable);
     }
 
     public void show() {
@@ -266,6 +206,10 @@ public class MainController implements BaseController {
         return decimalFormatComboBox;
     }
 
+    public Label getDecimalFormatLabel() {
+        return decimalFormatLabel;
+    }
+
     public Label getFilterLabel() {
         return filterLabel;
     }
@@ -276,6 +220,10 @@ public class MainController implements BaseController {
 
     public ComboBox<String> getFilterTypesComboBox() {
         return filterTypesComboBox;
+    }
+
+    public Label getFilterTypesLabel() {
+        return filterTypesLabel;
     }
 
     public Label getFrequencyLabel() {
@@ -290,12 +238,20 @@ public class MainController implements BaseController {
         return graph;
     }
 
-    public ComboBox<String> getGraphTypeComboBox() {
-        return graphTypeComboBox;
+    public ComboBox<String> getGraphTypesComboBox() {
+        return graphTypesComboBox;
+    }
+
+    public Label getGraphTypesLabel() {
+        return graphTypesLabel;
     }
 
     public ComboBox<String> getHorizontalScalesComboBox() {
         return horizontalScalesComboBox;
+    }
+
+    public Label getHorizontalScalesLabel() {
+        return horizontalScalesLabel;
     }
 
     public Label getNoiseLabel() {
@@ -314,20 +270,36 @@ public class MainController implements BaseController {
         return phaseTextField;
     }
 
+    public Label getReceivedAmplitudeLabel() {
+        return receivedAmplitudeLabel;
+    }
+
     public TextField getReceivedAmplitudeTextField() {
         return receivedAmplitudeTextField;
     }
 
+    public Label getReceivedDcLabel() {
+        return receivedDcLabel;
+    }
+
     public TextField getReceivedDcTextField() {
-        return receivedDCTextField;
+        return receivedDcTextField;
+    }
+
+    public Label getReceivedFrequencyLabel() {
+        return receivedFrequencyLabel;
     }
 
     public TextField getReceivedFrequencyTextField() {
         return receivedFrequencyTextField;
     }
 
-    public TextField getRmsTextField() {
-        return receivedRMSTextField;
+    public Label getReceivedRmsLabel() {
+        return receivedRmsLabel;
+    }
+
+    public TextField getReceivedRmsTextField() {
+        return receivedRmsTextField;
     }
 
     public RegulatorController getRegulatorController() {
@@ -346,6 +318,10 @@ public class MainController implements BaseController {
         return signalSettingsLabel;
     }
 
+    public ComboBox<String> getSignalTypeComboBox() {
+        return signalTypeComboBox;
+    }
+
     public Label getSignalTypeLabel() {
         return signalTypeLabel;
     }
@@ -360,6 +336,10 @@ public class MainController implements BaseController {
 
     public ComboBox<String> getVerticalScalesComboBox() {
         return verticalScalesComboBox;
+    }
+
+    public Label getVerticalScalesLabel() {
+        return verticalScalesLabel;
     }
 
     @Override
